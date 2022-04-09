@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"ustoj-master/controller"
+	"ustoj-master/api-server/controller"
 	"ustoj-master/middleware"
 )
 

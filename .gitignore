@@ -5,7 +5,9 @@ vendor/**
 storage
 pid
 build/*
+api-server/build/*
+scheduler/build/*
+*.exe
 
-config/application.yaml
-config/test.yaml
+config/*
 logs

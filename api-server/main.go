@@ -2,11 +2,12 @@ package main
 
 import (
 	"github.com/spf13/viper"
+	"os"
 	"ustoj-master/common"
 )
 
 func main() {
-	common.InitConfig("application")
+	common.InitConfig(os.Args[1])
 	common.InitLogger()
 	//common.InitDb()
 	r := RegisterRouter()

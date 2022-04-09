@@ -8,22 +8,22 @@ This is for the course project of CSIT6000O Advanced Cloud Computing, which incl
 ## Quick Start
 
 1. Clone the project.
-    
+
     ```
     git clone https://github.com/Dexter1636/ustoj-master.git
     ```
 
 2. Download modules.
-    
+
     ```
     cd ustoj-master
     go mod download
     ```
 
 3. Add application config file and test config file.
-    
-    Write the following code to your `ustoj-master/config/application.yaml`:
-    
+
+   Write the following code to your `ustoj-master/config/application.yaml`:
+
     ```yaml
     server:
       port: 8080
@@ -37,7 +37,7 @@ This is for the course project of CSIT6000O Advanced Cloud Computing, which incl
       password: <password>
       charset: utf8
    
-   redis:
+    redis:
       host: <hostname>
       port: <port>
       db: <db>
@@ -47,13 +47,18 @@ This is for the course project of CSIT6000O Advanced Cloud Computing, which incl
     logger:
       level: info
     ```
-   
-    And the same for `ustoj-master/config/test.yaml`, which is used for testing.
+
+   And the same for `ustoj-master/config/test.yaml`, which is used for testing.
 
 4. Run.
-    
     ```
-    go run .
+    cd api-server
+    go build -o build/
+    ./api-server <config-file-path>
+    
+    cd scheduler
+    go build -o build/
+    ./scheduler <config-file-path>
     ```
 
 ## Note
