@@ -9,7 +9,7 @@ import (
 func main() {
 	common.InitConfig(os.Args[1])
 	common.InitLogger()
-	//common.InitDb()
+	common.InitDb()
 	r := RegisterRouter()
 	port := viper.GetString("server.port")
 	r.Run("0.0.0.0:" + port)

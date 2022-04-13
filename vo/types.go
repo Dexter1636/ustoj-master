@@ -26,16 +26,13 @@ type ResponseMeta struct {
 
 // ==================== USER MANAGEMENT ====================
 
-type CreateMemberRequest struct {
+type RegisterRequest struct {
 	Username string // required，只支持大小写，长度不小于 8 位 不超过 20 位
 	Password string // required，同时包括大小写、数字，长度不少于 8 位 不超过 20 位
 }
 
-type CreateMemberResponse struct {
+type RegisterResponse struct {
 	Code ErrNo
-	Data struct {
-		UserID string // int64 范围
-	}
 }
 
 type LoginRequest struct {

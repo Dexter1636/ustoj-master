@@ -64,3 +64,7 @@ This is for the course project of CSIT6000O Advanced Cloud Computing, which incl
 ## Note
 
 Do NOT track `application.yaml` and `test.yaml` since they contain sensitive data.
+
+# Documents
+
+- [Database](doc/database.md)

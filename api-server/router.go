@@ -16,5 +16,11 @@ func RegisterRouter() *gin.Engine {
 	// ping test
 	g.GET("/ping", controller.Ping)
 
+	// user
+	uc := controller.NewUserController()
+	g.POST("/user/create", uc.Register)
+	g.POST("/user/login", uc.Login)
+	g.POST("/user/logout", uc.Logout)
+
 	return r
 }
