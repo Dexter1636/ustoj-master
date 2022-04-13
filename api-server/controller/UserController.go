@@ -3,8 +3,6 @@ package controller
 import (
 	"context"
 	"errors"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"regexp"
@@ -12,6 +10,9 @@ import (
 	"ustoj-master/model"
 	"ustoj-master/utils"
 	"ustoj-master/vo"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type IUserController interface {
@@ -48,7 +49,7 @@ func (ctl UserController) Register(c *gin.Context) {
 		return
 	}
 
-	//参数校验
+	//Parameter validation
 	tmpStr := req.Password
 	r1, _ := regexp.MatchString("^(\\w*[0-9]+\\w*[a-z]+\\w*[A-Z]+)|(\\w*[0-9]+\\w*[A-Z]+\\w*[a-z]+)$", tmpStr)
 	r2, _ := regexp.MatchString("^(\\w*[a-z]+\\w*[0-9]+\\w*[A-Z]+)|(\\w*[a-z]+\\w*[A-Z]+\\w*[0-9]+)$", tmpStr)
@@ -77,7 +78,7 @@ func (ctl UserController) Register(c *gin.Context) {
 		}
 	}
 
-	//用户已经存在
+	//User existed
 	code = vo.UserHasExisted
 	log.Println("CreateMember:UserExisted")
 	return
