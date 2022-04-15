@@ -59,6 +59,44 @@ type LogoutResponse struct {
 
 // ==================== PROBLEM LIST ====================
 
+type ProblemListRequest struct {
+	Page      int
+	Page_Size int
+}
+type ProblemListResponse struct {
+	ProblemID         int
+	Status            string
+	Difficulty        string
+	Acceptance        string
+	Global_Acceptance string
+}
+type ProblemDetailequest struct {
+	ProblemID int
+}
+type ProblemDetailResponse struct {
+	ProblemID        int
+	Description      string
+	Status           string
+	Difficulty       string
+	Acceptance       string
+	GlobalAcceptance string
+}
+
 // ==================== SUBMIT ====================
+type SubmissionRequest struct {
+	ProblemID int
+	Language  string
+	Code      string
+}
 
 // ==================== RESULT ====================
+
+type ResultRequest struct {
+	ProblemID int
+}
+type ResultResponse struct {
+	ProblemID int
+	Status    string
+	Language  string
+	RunTime   int
+}
