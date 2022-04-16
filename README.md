@@ -76,6 +76,6 @@ docker build -f Dockerfile-scheduler . -t ustoj/scheduler
 
 Do NOT track `application.yaml` and `test.yaml` since they contain sensitive data.
 
-# Documents
+## Documents
 
 - [Database](doc/database.md)
