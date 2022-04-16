@@ -1,0 +1,13 @@
+.idea
+pro_binary
+vendor/**
+!vendor/vendor.json
+storage
+pid
+build/*
+api-server/build/*
+scheduler/build/*
+*.exe
+
+config/*
+logs
