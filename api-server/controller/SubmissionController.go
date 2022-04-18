@@ -2,8 +2,10 @@ package controller
 
 import (
 	"context"
-	"log"
+	/*"errors"
+	"log"*/
 	"ustoj-master/common"
+	"ustoj-master/model"
 	"ustoj-master/vo"
 
 	"github.com/gin-gonic/gin"
@@ -25,25 +27,9 @@ func NewSubmissionController() ISubmissionController { // Similar to the interfa
 
 func (ctl SubmissionController) Submit(c *gin.Context) {
 	var req vo.SubmissionRequest
-	/*	var user, u model.User
-		code := vo.OK*/
+	var submission model.Submission
 
-	/*defer func() {
-		resp := vo.RegisterResponse{
-			Code: code,
-		}
-		c.JSON(http.StatusOK, resp)
-		utils.LogReqRespBody(req, resp, "CreateMember")
-	}()*/
-
-	if err := c.ShouldBindJSON(&req); err != nil {
-
-		log.Println("CreateMember: ShouldBindJSON error")
-		return
-	}
-
-	//User existed
-
-	log.Println("CreateMember:UserExisted")
+	submission = model.Submission{ProblemID: req.ProblemID, Code: req.Code, Language: req.Language}
+	ctl.DB.Create(&submission)
 	return
 }

@@ -88,7 +88,7 @@ func (ctl UserController) Login(c *gin.Context) {
 	//TODO implement me
 	panic("implement me")
 	var req vo.LoginRequest
-	//var user, u model.User
+	var user model.User
 	code := vo.OK
 	defer func() {
 		resp := vo.LoginResponse{
@@ -102,12 +102,12 @@ func (ctl UserController) Login(c *gin.Context) {
 		log.Println("Login: ShouldBindJSON error")
 		return
 	}
-	//user = model.User{Username: req.Username, Password: req.Password, RoleId: 1}
+	user = model.User{Username: req.Username, Password: req.Password, RoleId: 1}
+	ctl.DB.Create(&user)
 
 }
 
 func (ctl UserController) Logout(c *gin.Context) {
 	//TODO implement me
 	panic("implement me")
-	return
 }

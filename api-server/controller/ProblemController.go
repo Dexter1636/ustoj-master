@@ -2,8 +2,8 @@ package controller
 
 import (
 	"context"
-	"log"
 	"ustoj-master/common"
+	"ustoj-master/model"
 	"ustoj-master/vo"
 
 	"github.com/gin-gonic/gin"
@@ -21,34 +21,42 @@ type ProblemController struct {
 }
 
 func NewProblemController() IProblemController { // Similar to the interface of service
+	//return ProblemController{DB: common.GetDB(), Ctx: common.GetCtx()}
 	return ProblemController{DB: common.GetDB(), Ctx: common.GetCtx()}
 }
 
 func (ctl ProblemController) ProblemList(c *gin.Context) {
 	var req vo.ProblemListRequest
-	//var problem, p model.Problem
-	//code := vo.OK
+	var problem model.Problem
 
-	//problem = model.Problem{ProblemID: req.ProblemID, Status: req.Status, RoleId: 1}
+	/*defer func() {
+		resp := vo.ProblemListResponse{
+			ProblemID:         problemID,
+			Status:            status,
+			Difficulty:        difficulty,
+			Acceptance:        acceptance,
+			Global_Acceptance: globalAcceptance,
+		}
+		c.JSON(http.StatusOK, resp)
+		utils.LogReqRespBody(req, resp, "CreateMember")
+	}()*/
 
-	//User existed
-	if err := c.ShouldBindJSON(&req); err != nil {
-		//code = vo.UnknownError
-		log.Println("Login: ShouldBindJSON error")
-		return
-	}
+	var Page_size = req.Page_Size
+	println(Page_size)
+	ctl.DB.Create(&problem)
+
+	return
 }
+
 func (ctl ProblemController) ProblemDetail(c *gin.Context) {
-	var req vo.ProblemListRequest
-	//var problem, p model.Problem
-	//code := vo.OK
+	//TODO implement me
+	panic("implement me")
+	//var req vo.ProblemDetailRequest
+	//var problem model.Problem
+	//var description model.Description
 
-	//problem = model.Problem{ProblemID: req.ProblemID, Status: req.Status, RoleId: 1}
-
-	//User existed
-	if err := c.ShouldBindJSON(&req); err != nil {
-		//code = vo.UnknownError
-		log.Println("Login: ShouldBindJSON error")
-		return
-	}
+	/*description = model.Description{ProblemID: req.ProblemID}
+	ctl.DB.Create(&description)
+	ctl.DB.Create(&problem)*/
+	return
 }

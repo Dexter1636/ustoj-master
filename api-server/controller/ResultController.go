@@ -2,8 +2,8 @@ package controller
 
 import (
 	"context"
-	"log"
 	"ustoj-master/common"
+	"ustoj-master/model"
 	"ustoj-master/vo"
 
 	"github.com/gin-gonic/gin"
@@ -24,23 +24,10 @@ func NewResultController() IResultController { // Similar to the interface of se
 }
 
 func (ctl ResultController) ResultList(c *gin.Context) {
-	var req vo.ResultRequest
-	/*var user, u model.User
-	code := vo.OK*/
+	var req vo.ResultRequest //This varaible controls the request  json object
+	var submission model.Submission
 
-	/*defer func() {
-		resp := vo.RegisterResponse{
-			Code: code,
-		}
-		c.JSON(http.StatusOK, resp)
-		utils.LogReqRespBody(req, resp, "CreateMember")
-	}()*/
-
-	if err := c.ShouldBindJSON(&req); err != nil {
-		//code = vo.UnknownError
-		log.Println("CreateMember: ShouldBindJSON error")
-		return
-	}
-
+	submission = model.Submission{ProblemID: req.ProblemID}
+	ctl.DB.Create(&submission)
 	return
 }
