@@ -21,13 +21,12 @@ type IUserController interface {
 	Logout(c *gin.Context)
 }
 
-
 type UserController struct {
 	DB  *gorm.DB
 	Ctx context.Context
 }
 
-func NewUserController() IUserController {     // Similar to the interface of service
+func NewUserController() IUserController { // Similar to the interface of service
 	return UserController{DB: common.GetDB(), Ctx: common.GetCtx()}
 }
 
@@ -89,7 +88,7 @@ func (ctl UserController) Login(c *gin.Context) {
 	//TODO implement me
 	panic("implement me")
 	var req vo.LoginRequest
-	var user, u model.User
+	//var user, u model.User
 	code := vo.OK
 	defer func() {
 		resp := vo.LoginResponse{
@@ -103,19 +102,12 @@ func (ctl UserController) Login(c *gin.Context) {
 		log.Println("Login: ShouldBindJSON error")
 		return
 	}
-	user = model.User{Username: req.Username, Password: req.Password, RoleId: 1}
-	if err := ctl.DB.Where("user_name = ?", req.Username).Take(&u),err == nil{
+	//user = model.User{Username: req.Username, Password: req.Password, RoleId: 1}
 
-	log.Println("Login:Successfully, username:" + user.Username)
-	return
-	}
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Login Successfully",
-	})
 }
 
 func (ctl UserController) Logout(c *gin.Context) {
 	//TODO implement me
 	panic("implement me")
+	return
 }

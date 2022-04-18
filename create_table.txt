@@ -1,0 +1,33 @@
+create table user(
+username varchar(20)  PRIMARY KEY,
+password VARCHAR(20) NOT NULL,
+role_id tinyint
+)
+create table submission(
+submission_id bigint  UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+submission_time timestamp NOT NULL,
+problem_id bigint NOT NULL,
+username varchar(20) NOT NULL,
+language varchar(20),
+code mediumtext,
+status varchar(20),
+run_time int
+)
+
+
+ALTER TABLE submission
+ADD FOREIGN KEY (username) REFERENCES user(username);
+
+create table problem(
+problem_id int  UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
+stats varchar(20),
+difficulty varchar(20),
+acceptance varchar(20),
+global_acceptance varchar(20)
+)
+
+create table description(
+       problem_id  int PRIMARY KEY,
+       description BLOB
+)
+ALTER TABLE description MODIFY  problem_id int  PRIMARY KEY NOT NULL;
