@@ -2,8 +2,12 @@ package controller
 
 import (
 	"context"
+	"errors"
+	"log"
+	"net/http"
 	"ustoj-master/common"
 	"ustoj-master/model"
+	"ustoj-master/utils"
 	"ustoj-master/vo"
 
 	"github.com/gin-gonic/gin"
@@ -27,10 +31,17 @@ func NewProblemController() IProblemController { // Similar to the interface of 
 
 func (ctl ProblemController) ProblemList(c *gin.Context) {
 	var req vo.ProblemListRequest
-	var problem model.Problem
+	var p model.Problem
+	code := vo.OK
+	var problemID = 0
+	var status = ""
+	var difficulty = ""
+	var acceptance = ""
+	var globalAcceptance = ""
 
-	/*defer func() {
+	defer func() {
 		resp := vo.ProblemListResponse{
+			Code:              code,
 			ProblemID:         problemID,
 			Status:            status,
 			Difficulty:        difficulty,
@@ -39,24 +50,58 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, resp)
 		utils.LogReqRespBody(req, resp, "CreateMember")
-	}()*/
+	}()
 
 	var Page_size = req.Page_Size
 	println(Page_size)
-	ctl.DB.Create(&problem)
+	if result := ctl.DB.Find(&p); result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			log.Println("Successfully get the Problem set!")
+			//resp := result
+			return
 
+		} else {
+			code = vo.UnknownError
+			log.Println("CreateMember:Unknown-error while creating")
+			return
+
+		}
+
+	}
+	code = vo.UserHasExisted
+	log.Println("CreateMember:UserExisted")
 	return
 }
 
 func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 	//TODO implement me
 	panic("implement me")
-	//var req vo.ProblemDetailRequest
-	//var problem model.Problem
-	//var description model.Description
+	var req vo.ProblemDetailRequest
+	var problem model.Problem
+	//var descriptionModel model.Description
+	code := vo.OK
+	var problemID = 0
+	var description = ""
+	var status = ""
+	var difficulty = ""
+	var acceptance = ""
+	var globalAcceptance = ""
+	defer func() {
+		resp := vo.ProblemDetailResponse{
+			Code:              code,
+			ProblemID:         problemID,
+			Description:       description,
+			Status:            status,
+			Difficulty:        difficulty,
+			Acceptance:        acceptance,
+			Global_Acceptance: globalAcceptance,
+		}
+		c.JSON(http.StatusOK, resp)
+		utils.LogReqRespBody(req, resp, "CreateMember")
+	}()
 
-	/*description = model.Description{ProblemID: req.ProblemID}
-	ctl.DB.Create(&description)
-	ctl.DB.Create(&problem)*/
-	return
+	//descriptionModel = model.Description{ProblemID: req.ProblemID}
+	ctl.DB.Where("problem_id =?", req.ProblemID)
+	ctl.DB.Find(&problem)
+
 }

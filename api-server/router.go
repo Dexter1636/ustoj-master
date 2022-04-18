@@ -27,6 +27,7 @@ func RegisterRouter() *gin.Engine {
 }
 
 func ProblemRouter() *gin.Engine {
+
 	r := gin.Default()
 
 	r.Use(middleware.Recovery())

@@ -64,22 +64,24 @@ type ProblemListRequest struct {
 	Page_Size int
 }
 type ProblemListResponse struct {
+	Code              ErrNo
 	ProblemID         int
 	Status            string
 	Difficulty        string
 	Acceptance        string
 	Global_Acceptance string
 }
-type ProblemDetailequest struct {
+type ProblemDetailRequest struct {
 	ProblemID int
 }
 type ProblemDetailResponse struct {
-	ProblemID        int
-	Description      string
-	Status           string
-	Difficulty       string
-	Acceptance       string
-	GlobalAcceptance string
+	Code              ErrNo
+	ProblemID         int
+	Description       string
+	Status            string
+	Difficulty        string
+	Acceptance        string
+	Global_Acceptance string
 }
 
 // ==================== SUBMIT ====================
