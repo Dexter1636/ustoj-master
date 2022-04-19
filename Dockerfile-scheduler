@@ -1,0 +1,27 @@
+ARG BUILD_FROM=golang:1.14-alpine3.11
+ARG RUN_FROM=alpine:3.11
+
+FROM ${BUILD_FROM} as builder
+
+ENV GOPROXY https://goproxy.cn,direct
+RUN umask 022
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
+RUN apk update
+RUN apk --no-cache add curl git build-base
+
+RUN mkdir -p /etc/ustoj-scheduler
+RUN mkdir -p /go/src/ustoj-scheduler
+RUN mkdir -p /go/bin
+COPY . /go/src/ustoj-scheduler
+RUN cd /go/src/ustoj-scheduler/scheduler; go build -v -o /go/bin/ustoj-scheduler
+
+FROM ${RUN_FROM}
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN apk --no-cache add ca-certificates libdrm curl
+RUN mkdir -p /var/log/ustoj-scheduler
+WORKDIR /root/
+COPY --from=0 /go/bin/ustoj-scheduler .
+
+CMD ["./ustoj-scheduler"]
