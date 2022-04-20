@@ -95,9 +95,12 @@ type SubmissionRequest struct {
 
 type ResultRequest struct {
 	ProblemID int
+	Username  string
 }
 type ResultResponse struct {
+	Code      ErrNo
 	ProblemID int
+	Username  string
 	Status    string
 	Language  string
 	RunTime   int

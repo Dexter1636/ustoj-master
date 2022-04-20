@@ -2,8 +2,7 @@ package controller
 
 import (
 	"context"
-	/*"errors"
-	"log"*/
+	"log"
 	"ustoj-master/common"
 	"ustoj-master/model"
 	"ustoj-master/vo"
@@ -30,6 +29,10 @@ func (ctl SubmissionController) Submit(c *gin.Context) {
 	var submission model.Submission
 
 	submission = model.Submission{ProblemID: req.ProblemID, Code: req.Code, Language: req.Language}
-	ctl.DB.Create(&submission)
+
+	if err := ctl.DB.Create(&submission).Error; err != nil {
+		log.Println("Submission Error")
+		return
+	}
 	return
 }
