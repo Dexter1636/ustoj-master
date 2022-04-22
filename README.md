@@ -54,11 +54,11 @@ This is for the course project of CSIT6000O Advanced Cloud Computing, which incl
     ```
     cd api-server
     go build -o build/
-    ./api-server <config-file-path>
+    ./build/api-server <config-file-path>
     
     cd scheduler
     go build -o build/
-    ./scheduler <config-file-path>
+    ./build/scheduler <config-file-path>
     ```
 
 ## Build Docker image
