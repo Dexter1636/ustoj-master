@@ -32,22 +32,24 @@ func NewProblemController() IProblemController { // Similar to the interface of 
 
 func (ctl ProblemController) ProblemList(c *gin.Context) {
 	var req vo.ProblemListRequest
-	var problem model.Problem
+	var problem []model.Problem
 	code := vo.OK
-	var problemID = 0
-	var status = ""
-	var difficulty = ""
-	var acceptance = ""
-	var globalAcceptance = ""
+	/*	var problemID = 0
+		var status = ""
+		var difficulty = ""
+		var acceptance = ""
+		var globalAcceptance = ""*/
+	var problemlist []model.Problem
 
 	defer func() {
 		resp := vo.ProblemListResponse{
-			Code:              code,
-			ProblemID:         problemID,
+			Code: code,
+			/*ProblemID:         problemID,
 			Status:            status,
 			Difficulty:        difficulty,
 			Acceptance:        acceptance,
-			Global_Acceptance: globalAcceptance,
+			Global_Acceptance: globalAcceptance,*/
+			Problemlist: problemlist,
 		}
 		c.JSON(http.StatusOK, resp)
 		utils.LogReqRespBody(req, resp, "ReturnProblemPage")
@@ -55,35 +57,25 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 
 	var Page_size = req.Page_Size
 	println(Page_size)
-	/*if result := ctl.DB.Find(&p); result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			log.Println("Successfully get the Problem set!")
-			//resp := result
-			return
 
-		} else {
-			code = vo.UnknownError
-			log.Println("CreateMember:Unknown-error while creating")
-			return
-
-		}
-
-	}*/
-	/*problem = model.Problem{ProblemID: problemID, Status: status, Difficulty: difficulty, Acceptance: acceptance, GlobalAcceptance: globalAcceptance}*/
 	if result := ctl.DB.Find(&problem); result.Error != nil {
-		code = vo.UnknownError
 		log.Println("Error occured during get all problem information! ")
 		return
 	} else {
 
 		log.Println("The lenght of all problem :" + strconv.FormatInt(result.RowsAffected, 10))
 		/*result should be a slice*/
-
-		problemID = problem.ProblemID
-		status = problem.Status
-		difficulty = problem.Difficulty
-		acceptance = problem.Acceptance
-		globalAcceptance = problem.GlobalAcceptance
+		/*	for problemdetail := range problem {
+			modelList = append(modelList, model.Problem{
+				problemID:        problemdetail.ProblemID,
+				status:           problemdetail.Status,
+				difficulty:       problemdetail.Difficulty,
+				acceptance:       problemdetail.Acceptance,
+				globalAcceptance: problemdetail.GlobalAcceptance,
+			})
+		}*/
+		problemlist = problem
+		code = vo.UnknownError
 
 		return
 	}

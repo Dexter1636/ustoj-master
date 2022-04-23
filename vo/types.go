@@ -1,5 +1,7 @@
 package vo
 
+import "ustoj-master/model"
+
 // 说明：
 // 1. 所提到的「位数」均以字节长度为准
 // 2. 所有的 ID 均为 int64（以 string 方式表现）
@@ -64,12 +66,13 @@ type ProblemListRequest struct {
 	Page_Size int
 }
 type ProblemListResponse struct {
-	Code              ErrNo
-	ProblemID         int
-	Status            string
-	Difficulty        string
-	Acceptance        string
-	Global_Acceptance string
+	Code ErrNo
+	//	ProblemID         int
+	//	Status            string
+	//	Difficulty        string
+	//	Acceptance        string
+	//	Global_Acceptance string
+	Problemlist []model.Problem
 }
 type ProblemDetailRequest struct {
 	ProblemID int
