@@ -32,15 +32,15 @@ func ProblemRouter() *gin.Engine {
 
 	r.Use(middleware.Recovery())
 
-	g := r.Group("/api/v1")
+	p := r.Group("/api/v1")
 
 	// ping test
-	g.GET("/ping", controller.Ping)
+	p.GET("/ping", controller.Ping)
 
 	// problem
 	pc := controller.NewProblemController()
-	g.POST("/user/problem_list", pc.ProblemList)
-	g.POST("/user/problem_detail", pc.ProblemDetail)
+	p.POST("/user/problem_list", pc.ProblemList)
+	p.POST("/user/problem_detail", pc.ProblemDetail)
 
 	return r
 }
@@ -50,14 +50,14 @@ func SubmissionRouter() *gin.Engine {
 
 	r.Use(middleware.Recovery())
 
-	g := r.Group("/api/v1")
+	s := r.Group("/api/v1")
 
 	// ping test
-	g.GET("/ping", controller.Ping)
+	s.GET("/ping", controller.Ping)
 
 	// problem
 	sc := controller.NewSubmissionController()
-	g.POST("/user/submit", sc.Submit)
+	s.POST("/user/submit", sc.Submit)
 
 	return r
 }
