@@ -24,6 +24,7 @@ func MainJob() {
 	if err != nil {
 		logger.Errorln("List Job error")
 		logger.Errorln(err)
+		return
 	}
 	logger.Infoln(strconv.Itoa(len(list.Items)) + " jobs are running.")
 
