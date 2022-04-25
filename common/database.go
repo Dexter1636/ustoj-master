@@ -2,7 +2,9 @@ package common
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -24,6 +26,17 @@ func InitDb() {
 	//loggerLevel := viper.GetString("logger.level")
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=true",
 		username, password, host, port, database, charset)
+	// create database if not exist
+	temp_db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=utf8&parseTime=True&loc=Local",
+		username, password, host, port))
+	if err != nil {
+		panic(err)
+	}
+	defer temp_db.Close()
+	_, err = temp_db.Exec("CREATE DATABASE IF NOT EXISTS " + database)
+	if err != nil {
+		panic(err)
+	}
 	// config
 	config := &gorm.Config{}
 	if env == "production" {

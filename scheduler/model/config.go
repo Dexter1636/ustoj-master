@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 )
 
@@ -10,6 +11,7 @@ type Config struct {
 	Server      Server     `yaml:"server"`
 	Datasource  Datasource `yaml:"datasource"`
 	Logger      Logger     `yaml:"logger"`
+	Kubernetes  Kubernetes `yaml:"kubernetes"`
 }
 
 type Server struct {
@@ -28,6 +30,10 @@ type Datasource struct {
 
 type Logger struct {
 	Info string `yaml:"info"`
+}
+
+type Kubernetes struct {
+	KubeConfigFile string
 }
 
 var Cfg Config

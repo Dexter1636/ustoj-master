@@ -1,0 +1,14 @@
+server:
+  port: 8080
+
+datasource:
+  driverName: mysql
+  host: 192.168.31.152
+  port: 3306
+  database: ustoj
+  username: root
+  password: 123456
+  charset: utf8
+
+logger:
+  level: info
