@@ -15,5 +15,5 @@ logger:
   level: info
 
 kubernetes:
-  masterUrl: 192.168.31.80
+  masterUrl: https://192.168.31.80:6443
   masterConfig: /tmp/kubernetes_admin_config/admin.conf

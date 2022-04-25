@@ -1,6 +1,9 @@
 package controller
 
 import (
+	"strconv"
+	"ustoj-master/service"
+
 	"github.com/robfig/cron/v3"
 )
 
@@ -10,10 +13,21 @@ func RunReadResult(done func()) {
 	c := cron.New(cron.WithSeconds())
 
 	spec := "*/2 * * * * ?"
-	c.AddFunc(spec, func() {
-		logger.Infoln("cron RunReadResult")
-	})
+	c.AddFunc(spec, MainJob)
 
 	c.Start()
 	select {} // block
+}
+
+func MainJob() {
+	list, err := service.ListRunningJob()
+	if err != nil {
+		logger.Errorln("List Job error")
+		logger.Errorln(err)
+	}
+	logger.Infoln(strconv.Itoa(len(list.Items)) + " jobs are running.")
+
+	for _, job := range list.Items {
+		logger.Infoln(job.Status.Phase)
+	}
 }

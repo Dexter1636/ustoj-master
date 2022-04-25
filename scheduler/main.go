@@ -7,7 +7,7 @@ import (
 	"ustoj-master/scheduler/controller"
 	"ustoj-master/scheduler/model"
 	appConfig "ustoj-master/scheduler/model"
-	"ustoj-master/service"
+	cluster "ustoj-master/service"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 	model.InitConfig()
 	common.InitLogger(appConfig.Cfg.Logger.WriteFile)
 	common.InitDb(appConfig.Cfg.Logger.Level)
-	service.InitCluster(appConfig.Cfg.Kubernetes.MasterUrl, appConfig.Cfg.Kubernetes.MasterConfig)
+	cluster.InitCluster(appConfig.Cfg.Kubernetes.MasterUrl, appConfig.Cfg.Kubernetes.MasterConfig)
 
 	var wg sync.WaitGroup
 	wg.Add(1)
