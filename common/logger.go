@@ -11,7 +11,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"ustoj-master/scheduler/model"
 
 	"github.com/sirupsen/logrus"
 )
@@ -73,11 +72,11 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 	return []byte(output), nil
 }
 
-func InitLogger(appConfig model.Config) {
+func InitLogger(writeFile bool) {
 	logger.Formatter = new(Formatter)
 	// logger.SetLevel(config.Log.Level)
 
-	if appConfig.Logger.WriteFile {
+	if writeFile {
 		// TODO: set log path from config
 		// generate file name
 		wd, err := os.Getwd()

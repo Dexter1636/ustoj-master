@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"ustoj-master/scheduler/model"
 
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
@@ -16,7 +15,7 @@ import (
 var DB *gorm.DB
 var Ctx context.Context
 
-func InitDb(appConfig model.Config) {
+func InitDb(loggerLevel string) {
 	// Capture connection properties
 	//driverName := viper.GetString("datasource.driverName")
 	host := viper.GetString("datasource.host")
@@ -41,7 +40,7 @@ func InitDb(appConfig model.Config) {
 	}
 	// config
 	var lvl gormlogger.LogLevel
-	if appConfig.Logger.Level == "Warn" {
+	if loggerLevel == "Warn" {
 		lvl = gormlogger.Warn
 	} else {
 		lvl = gormlogger.Info
