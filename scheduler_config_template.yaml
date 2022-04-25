@@ -13,3 +13,7 @@ datasource:
 logger:
   writeFile: true
   level: info
+
+kubernetes:
+  masterUrl: 192.168.31.80
+  masterConfig: /tmp/kubernetes_admin_config/admin.conf

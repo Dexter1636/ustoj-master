@@ -35,7 +35,8 @@ type Logger struct {
 }
 
 type Kubernetes struct {
-	KubeConfigFile string
+	MasterUrl    string `yaml:"masrerUrl"`
+	MasterConfig string `yaml:"masterConfig"`
 }
 
 var Cfg Config
