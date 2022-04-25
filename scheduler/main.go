@@ -11,8 +11,8 @@ import (
 func main() {
 	common.ReadConfig(os.Args[1])
 	model.InitConfig()
-	common.InitLogger()
-	common.InitDb()
+	common.InitLogger(model.Cfg)
+	common.InitDb(model.Cfg)
 
 	var wg sync.WaitGroup
 	wg.Add(1)

@@ -29,7 +29,9 @@ type Datasource struct {
 }
 
 type Logger struct {
-	Info string `yaml:"info"`
+	Info      string `yaml:"info"`
+	Level     string `yaml:"level"`
+	WriteFile bool   `yaml:"writeFile"`
 }
 
 type Kubernetes struct {

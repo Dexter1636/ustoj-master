@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/robfig/cron/v3"
 )
 
@@ -12,7 +11,7 @@ func RunReadResult(done func()) {
 
 	spec := "*/2 * * * * ?"
 	c.AddFunc(spec, func() {
-		fmt.Println("cron RunReadResult")
+		logger.Infoln("cron RunReadResult")
 	})
 
 	c.Start()

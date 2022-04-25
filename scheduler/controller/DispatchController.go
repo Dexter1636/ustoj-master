@@ -1,9 +1,12 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/robfig/cron/v3"
+
+	"ustoj-master/common"
 )
+
+var logger = common.LogInstance()
 
 func RunDispatch(done func()) {
 	defer done()
@@ -12,7 +15,7 @@ func RunDispatch(done func()) {
 
 	spec := "*/2 * * * * ?"
 	c.AddFunc(spec, func() {
-		fmt.Println("cron RunDispatch")
+		logger.Infoln("cron RunDispatch")
 	})
 
 	c.Start()

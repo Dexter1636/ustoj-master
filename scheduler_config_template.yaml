@@ -11,4 +11,5 @@ datasource:
   charset: utf8
 
 logger:
+  writeFile: true
   level: info

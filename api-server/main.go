@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/spf13/viper"
 	"os"
 	"ustoj-master/api-server/model"
 	"ustoj-master/common"
+
+	"github.com/spf13/viper"
 )
 
 func main() {

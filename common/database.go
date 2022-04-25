@@ -4,17 +4,19 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
+	"ustoj-master/scheduler/model"
 
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
+	gormlogger "gorm.io/gorm/logger"
 )
 
 var DB *gorm.DB
 var Ctx context.Context
 
-func InitDb() {
+func InitDb(appConfig model.Config) {
 	// Capture connection properties
 	//driverName := viper.GetString("datasource.driverName")
 	host := viper.GetString("datasource.host")
@@ -38,25 +40,33 @@ func InitDb() {
 		panic(err)
 	}
 	// config
-	config := &gorm.Config{}
-	if env == "production" {
-		config.Logger = logger.New(fileLogger, logger.Config{LogLevel: logger.Info, Colorful: false})
+	var lvl gormlogger.LogLevel
+	if appConfig.Logger.Level == "Warn" {
+		lvl = gormlogger.Warn
 	} else {
-		config.Logger = logger.Default.LogMode(logger.Info)
+		lvl = gormlogger.Info
 	}
+	newLogger := gormlogger.New(
+		log.New(logger.Out, "\r\n", log.LstdFlags),
+		gormlogger.Config{
+			LogLevel: lvl,
+		},
+	)
+	config := &gorm.Config{}
+	config.Logger = newLogger
 	// Get a database handle
 	db, err := gorm.Open(mysql.Open(dsn), config)
 	if err != nil {
-		panic("failed to connect to database, err: " + err.Error())
+		logger.Panicln("failed to connect to database, err: " + err.Error())
 	}
 	// set connection pool size
 	sqlDB, err := db.DB()
 	if err != nil {
-		panic("failed to config db connection pool, err: " + err.Error())
+		logger.Panicln("failed to config db connection pool, err: " + err.Error())
 	}
 	sqlDB.SetMaxOpenConns(190)
 	DB = db
-	fmt.Println("Connected to database.")
+	logger.Info("Connected to database.")
 }
 
 func GetDB() *gorm.DB {
