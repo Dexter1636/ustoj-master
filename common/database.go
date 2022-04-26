@@ -75,3 +75,14 @@ func GetDB() *gorm.DB {
 func GetCtx() context.Context {
 	return Ctx
 }
+
+func CreateTableIfNotExists(modelType interface{}) error {
+	var err error
+	if err = DB.
+		Set("gorm:table_options", "ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8").
+		AutoMigrate(modelType); err != nil {
+		logger.Errorln(err)
+		logger.Errorf("AutoMigrate failed! table = %s", modelType)
+	}
+	return err
+}
