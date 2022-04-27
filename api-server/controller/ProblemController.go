@@ -2,12 +2,11 @@ package controller
 
 import (
 	"context"
-	"errors"
 	"log"
 	"net/http"
-	"strconv"
 	"ustoj-master/common"
 	"ustoj-master/model"
+	"ustoj-master/service"
 	"ustoj-master/utils"
 	"ustoj-master/vo"
 
@@ -32,7 +31,7 @@ func NewProblemController() IProblemController { // Similar to the interface of 
 
 func (ctl ProblemController) ProblemList(c *gin.Context) {
 	var req vo.ProblemListRequest
-	var problem []model.Problem
+	//var problem []model.Problem
 	code := vo.OK
 	/*	var problemID = 0
 		var status = ""
@@ -40,6 +39,7 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 		var acceptance = ""
 		var globalAcceptance = ""*/
 	var problemlist []model.Problem
+	var DBService service.DBService
 
 	defer func() {
 		resp := vo.ProblemListResponse{
@@ -57,15 +57,15 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 
 	var Page_size = req.Page_Size
 	println(Page_size)
-
-	if result := ctl.DB.Find(&problem); result.Error != nil {
+	problemlist = DBService.GetProblemList(problemlist)
+	/*if result := ctl.DB.Find(&problem); result.Error != nil {
 		log.Println("Error occured during get all problem information! ")
 		return
 	} else {
 
 		log.Println("The lenght of all problem :" + strconv.FormatInt(result.RowsAffected, 10))
 		/*result should be a slice*/
-		/*	for problemdetail := range problem {
+	/*	for problemdetail := range problem {
 			modelList = append(modelList, model.Problem{
 				problemID:        problemdetail.ProblemID,
 				status:           problemdetail.Status,
@@ -73,15 +73,18 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 				acceptance:       problemdetail.Acceptance,
 				globalAcceptance: problemdetail.GlobalAcceptance,
 			})
-		}*/
+		}
 		problemlist = problem
 		code = vo.UnknownError
 
 		return
+	}*/
+	if len(problemlist) == 0 {
+		code = vo.UserHasExisted
+		log.Println("CreateMember:UserExisted")
 	}
-	code = vo.UserHasExisted
-	log.Println("CreateMember:UserExisted")
 	return
+
 }
 
 func (ctl ProblemController) ProblemDetail(c *gin.Context) {
@@ -89,7 +92,8 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 	panic("implement me")
 	var req vo.ProblemDetailRequest
 	var problem, p model.Problem
-	var descriptionModel, d model.Description
+	//	var descriptionModel, d model.Description
+	var d model.Description
 	code := vo.OK
 	var problemID = 0
 	var description = ""
@@ -97,6 +101,7 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 	var difficulty = ""
 	var acceptance = ""
 	var globalAcceptance = ""
+	var DBService service.DBService
 	defer func() {
 		resp := vo.ProblemDetailResponse{
 			Code:              code,
@@ -112,8 +117,8 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 	}()
 
 	//descriptionModel = model.Description{ProblemID: req.ProblemID}
-	problem = model.Problem{ProblemID: problemID, Status: status, Difficulty: difficulty, Acceptance: acceptance, GlobalAcceptance: globalAcceptance}
-	if err := ctl.DB.Where("problem_id =?", req.ProblemID).Take(&p).Error; err != nil {
+	//problem = model.Problem{ProblemID: problemID, Status: status, Difficulty: difficulty, Acceptance: acceptance, GlobalAcceptance: globalAcceptance}
+	/*if err := ctl.DB.Where("problem_id =?", req.ProblemID).Take(&p).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			ctl.DB.First(&problem, req.ProblemID)
 			log.Println("Successfully find the problem detail information" + strconv.Itoa(problem.ProblemID))
@@ -128,9 +133,18 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 			log.Println("Problem Information :Unknown-error while finding Problem information")
 			return
 		}
-	}
+	}*/
+	problem.ProblemID = req.ProblemID
+	p = DBService.ProblemDetail(req.ProblemID)
+	problemID = p.ProblemID
+	status = p.Status
+	difficulty = p.Difficulty
+	acceptance = p.Acceptance
+	globalAcceptance = p.GlobalAcceptance
 	//ctl.DB.Find(&problem)
-	if err := ctl.DB.Where("problem_id =?", req.ProblemID).Take(&d).Error; err != nil {
+	d = DBService.ProblemDescription(req.ProblemID)
+	description = string(d.Description)
+	/*if err := ctl.DB.Where("problem_id =?", req.ProblemID).Take(&d).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			ctl.DB.First(&descriptionModel)
 			log.Println("Successfully find the problem detail information" + string(descriptionModel.Description))
@@ -141,5 +155,9 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 			log.Println("Problem Information :Unknown-error while finding Problem information")
 			return
 		}
+	}*/
+	if problemID == 0 {
+		code = vo.UnknownError
 	}
+	return
 }

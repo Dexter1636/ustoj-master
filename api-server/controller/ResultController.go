@@ -2,12 +2,10 @@ package controller
 
 import (
 	"context"
-	"errors"
-	"log"
 	"net/http"
-	"strconv"
 	"ustoj-master/common"
 	"ustoj-master/model"
+	"ustoj-master/service"
 	"ustoj-master/utils"
 	"ustoj-master/vo"
 
@@ -37,7 +35,7 @@ func (ctl ResultController) ResultList(c *gin.Context) {
 	var language = ""
 	var runtime = 0
 	code := vo.OK
-
+	var DBService service.DBService
 	defer func() {
 		resp := vo.ResultResponse{
 			Code:      code,
@@ -52,7 +50,14 @@ func (ctl ResultController) ResultList(c *gin.Context) {
 	}()
 
 	submission = model.Submission{ProblemID: req.ProblemID, Username: req.Username}
-	if err := ctl.DB.Where("problem_id =?", req.ProblemID).Where("username = ?", req.Username).Take(&s).Error; err != nil {
+	s = DBService.ResultList(&submission)
+	problemID = s.ProblemID
+	username = s.Username
+	status = s.Status
+	language = s.Language
+	runtime = s.RunTime
+
+	/*if err := ctl.DB.Where("problem_id =?", req.ProblemID).Where("username = ?", req.Username).Take(&s).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			ctl.DB.First(&submission)
 			log.Println("Successfully find the problem result" + strconv.Itoa(submission.ProblemID))
@@ -67,6 +72,9 @@ func (ctl ResultController) ResultList(c *gin.Context) {
 			log.Println("Result :Unknown-error while finding Problem information")
 			return
 		}
+	}*/
+	if problemID == 0 {
+		code = vo.UnknownError
 	}
 	return
 }

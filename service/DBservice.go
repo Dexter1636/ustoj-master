@@ -13,14 +13,14 @@ import (
 )
 
 type DBService interface {
-	CreateUser(user model.User) vo.ErrNo
-	Login(user model.User) string
+	CreateUser(user *model.User) vo.ErrNo
+	Login(user *model.User) string
 	//GetProblemList(map[string]interface{}) ([]*model.Problem, error)
 	GetProblemList(problem []model.Problem) []model.Problem
-	ProblemDetail(problemID string) model.Problem
-	ProblemDescription(problemID string) model.Description
-	Submission(submission model.Submission)
-	ResultList(submitted model.Submission) model.Submission
+	ProblemDetail(problemID int) model.Problem
+	ProblemDescription(problemID int) model.Description
+	Submission(submission *model.Submission)
+	ResultList(submitted *model.Submission) model.Submission
 }
 type DBConnect struct {
 	DB  *gorm.DB
@@ -35,7 +35,7 @@ func NewDBConnect(DB *gorm.DB) DBService { // Similar to the interface of servic
 	 retrun
 }*/
 
-func (db *DBConnect) CreateUser(user model.User) vo.ErrNo {
+func (db *DBConnect) CreateUser(user *model.User) vo.ErrNo {
 	var u model.User
 	if err := db.DB.Where("user_name = ?", user.Username).Take(&u).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -50,7 +50,7 @@ func (db *DBConnect) CreateUser(user model.User) vo.ErrNo {
 	return vo.UnknownError
 }
 
-func (db *DBConnect) Login(user model.User) string {
+func (db *DBConnect) Login(user *model.User) string {
 	var u model.User
 	if err := db.DB.Where("user_name = ?", user.Username).Where("password =?", user.Password).Take(&u).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -76,7 +76,7 @@ func (db *DBConnect) GetProblemList(problem []model.Problem) []model.Problem {
 		return problemlist
 	}
 }
-func (db *DBConnect) ProblemDetail(problemID string) model.Problem {
+func (db *DBConnect) ProblemDetail(problemID int) model.Problem {
 	var problem, p model.Problem
 	if err := db.DB.Where("problem_id =?", problemID).Take(&p).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -91,7 +91,7 @@ func (db *DBConnect) ProblemDetail(problemID string) model.Problem {
 	}
 	return problem
 }
-func (db *DBConnect) ProblemDescription(problemID string) model.Description {
+func (db *DBConnect) ProblemDescription(problemID int) model.Description {
 	var descriptionModel, d model.Description
 	if err := db.DB.Where("problem_id =?", problemID).Take(&d).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -106,14 +106,14 @@ func (db *DBConnect) ProblemDescription(problemID string) model.Description {
 	}
 	return descriptionModel
 }
-func (db *DBConnect) Submission(submission model.Submission) {
+func (db *DBConnect) Submission(submission *model.Submission) {
 	if err := db.DB.Create(&submission).Error; err != nil {
 		log.Println("Submission Error")
 
 	}
 
 }
-func (db *DBConnect) ResultList(submitted model.Submission) model.Submission {
+func (db *DBConnect) ResultList(submitted *model.Submission) model.Submission {
 	var submission, s model.Submission
 	if err := db.DB.Where("problem_id =?", submitted.ProblemID).Where("username = ?", submitted.Username).Take(&s).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

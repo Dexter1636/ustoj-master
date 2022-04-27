@@ -2,12 +2,12 @@ package controller
 
 import (
 	"context"
-	"errors"
 	"log"
 	"net/http"
 	"regexp"
 	"ustoj-master/common"
 	"ustoj-master/model"
+	"ustoj-master/service"
 	"ustoj-master/utils"
 	"ustoj-master/vo"
 
@@ -32,8 +32,10 @@ func NewUserController() IUserController { // Similar to the interface of servic
 
 func (ctl UserController) Register(c *gin.Context) {
 	var req vo.RegisterRequest
-	var user, u model.User
+	//var user, u model.User
+	var user model.User
 	code := vo.OK
+	var DBService service.DBService
 
 	defer func() {
 		resp := vo.RegisterResponse{
@@ -65,8 +67,8 @@ func (ctl UserController) Register(c *gin.Context) {
 	}
 
 	user = model.User{Username: req.Username, Password: req.Password, RoleId: 1}
-
-	if err := ctl.DB.Where("user_name = ?", req.Username).Take(&u).Error; err != nil {
+	code = DBService.CreateUser(&user)
+	/*if err := ctl.DB.Where("user_name = ?", req.Username).Take(&u).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			ctl.DB.Create(&user)
 			log.Println("CreateMember:Successfully create, username:" + user.Username)
@@ -76,7 +78,7 @@ func (ctl UserController) Register(c *gin.Context) {
 			log.Println("CreateMember:Unknown-error while creating")
 			return
 		}
-	}
+	}*/
 
 	//User existed
 	code = vo.UserHasExisted
@@ -88,8 +90,9 @@ func (ctl UserController) Login(c *gin.Context) {
 	//TODO implement me
 	panic("implement me")
 	var req vo.LoginRequest
-	var u model.User
+	var user model.User
 	var loginobject vo.LoginResponse
+	var DBService service.DBService
 	code := vo.OK
 	defer func() {
 		resp := vo.LoginResponse{
@@ -104,8 +107,12 @@ func (ctl UserController) Login(c *gin.Context) {
 		log.Println("Login: ShouldBindJSON error")
 		return
 	}
-
-	if err := ctl.DB.Where("user_name = ?", req.Username).Where("password =?", req.Password).Take(&u).Error; err != nil {
+	user = model.User{Username: req.Username, Password: req.Password, RoleId: 1}
+	loginobject.Data.UserID = DBService.Login(&user)
+	if loginobject.Data.UserID == "" {
+		code = vo.UnknownError
+	}
+	/*	if err := ctl.DB.Where("user_name = ?", req.Username).Where("password =?", req.Password).Take(&u).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			loginobject.Data.UserID = u.Username
 		} else {
@@ -113,7 +120,7 @@ func (ctl UserController) Login(c *gin.Context) {
 			log.Println("Not User record")
 			return
 		}
-	}
+	}*/
 
 }
 

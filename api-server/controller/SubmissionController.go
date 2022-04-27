@@ -2,9 +2,9 @@ package controller
 
 import (
 	"context"
-	"log"
 	"ustoj-master/common"
 	"ustoj-master/model"
+	"ustoj-master/service"
 	"ustoj-master/vo"
 
 	"github.com/gin-gonic/gin"
@@ -27,12 +27,13 @@ func NewSubmissionController() ISubmissionController { // Similar to the interfa
 func (ctl SubmissionController) Submit(c *gin.Context) {
 	var req vo.SubmissionRequest
 	var submission model.Submission
-
+	var DBService service.DBService
 	submission = model.Submission{ProblemID: req.ProblemID, Code: req.Code, Language: req.Language}
-
-	if err := ctl.DB.Create(&submission).Error; err != nil {
-		log.Println("Submission Error")
-		return
-	}
+	DBService.Submission(&submission)
 	return
+	/*	if err := ctl.DB.Create(&submission).Error; err != nil {
+			log.Println("Submission Error")
+			return
+		}
+		return*/
 }
