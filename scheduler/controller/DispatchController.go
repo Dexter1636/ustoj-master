@@ -16,6 +16,11 @@ func RunDispatch(done func()) {
 	spec := "*/2 * * * * ?"
 	c.AddFunc(spec, func() {
 		logger.Infoln("cron RunDispatch")
+		// TODO: acquire n submissions
+
+		// TODO: acquire related info and call k8s service to run the jobs
+		// _code, case, _lang
+
 	})
 
 	c.Start()
