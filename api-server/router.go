@@ -24,7 +24,7 @@ func RegisterRouter() *gin.Engine {
 
 	// user
 	uc := controller.NewUserController()
-	authRoutes := r.Group("/api/vi", middleware.AuthorizenJWT(jwtService))
+	authRoutes := r.Group("/api/vi")
 	{
 		authRoutes.POST("/user/create", uc.Register)
 		authRoutes.POST("/user/login", uc.Login)
