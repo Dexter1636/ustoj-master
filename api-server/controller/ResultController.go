@@ -36,6 +36,7 @@ func (ctl ResultController) ResultList(c *gin.Context) {
 	var runtime = 0
 	code := vo.OK
 	var DBService service.DBService
+	var JWTService service.JWTService
 	defer func() {
 		resp := vo.ResultResponse{
 			Code:      code,
@@ -57,24 +58,14 @@ func (ctl ResultController) ResultList(c *gin.Context) {
 	language = s.Language
 	runtime = s.RunTime
 
-	/*if err := ctl.DB.Where("problem_id =?", req.ProblemID).Where("username = ?", req.Username).Take(&s).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			ctl.DB.First(&submission)
-			log.Println("Successfully find the problem result" + strconv.Itoa(submission.ProblemID))
-			problemID = submission.ProblemID
-			username = submission.Username
-			status = submission.Status
-			language = submission.Language
-			runtime = submission.RunTime
-			return
-		} else {
-			code = vo.UnknownError
-			log.Println("Result :Unknown-error while finding Problem information")
-			return
-		}
-	}*/
 	if problemID == 0 {
 		code = vo.UnknownError
 	}
+	autoHeader := c.GetHeader("Authorization")
+	token, errToken := JWTService.ValidateToken(autoHeader)
+	if errToken != nil {
+		panic(errToken.Error())
+	}
+	print(token)
 	return
 }

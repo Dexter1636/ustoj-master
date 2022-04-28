@@ -3,8 +3,13 @@ package main
 import (
 	"ustoj-master/api-server/controller"
 	"ustoj-master/middleware"
+	"ustoj-master/service"
 
 	"github.com/gin-gonic/gin"
+)
+
+var (
+	jwtService service.JWTService = service.NewJWTService()
 )
 
 func RegisterRouter() *gin.Engine {
@@ -19,9 +24,12 @@ func RegisterRouter() *gin.Engine {
 
 	// user
 	uc := controller.NewUserController()
-	g.POST("/user/create", uc.Register)
-	g.POST("/user/login", uc.Login)
-	g.POST("/user/logout", uc.Logout)
+	authRoutes := r.Group("/api/vi", middleware.AuthorizenJWT(jwtService))
+	{
+		authRoutes.POST("/user/create", uc.Register)
+		authRoutes.POST("/user/login", uc.Login)
+		authRoutes.POST("/user/logout", uc.Logout)
+	}
 
 	return r
 }
@@ -39,9 +47,11 @@ func ProblemRouter() *gin.Engine {
 
 	// problem
 	pc := controller.NewProblemController()
-	p.POST("/user/problem_list", pc.ProblemList)
-	p.POST("/user/problem_detail", pc.ProblemDetail)
-
+	ProblemRoutes := r.Group("api/v1", middleware.AuthorizenJWT(jwtService))
+	{
+		ProblemRoutes.POST("/user/problem_list", pc.ProblemList)
+		ProblemRoutes.POST("/user/problem_detail", pc.ProblemDetail)
+	}
 	return r
 }
 
@@ -57,7 +67,10 @@ func SubmissionRouter() *gin.Engine {
 
 	// problem
 	sc := controller.NewSubmissionController()
-	s.POST("/user/submit", sc.Submit)
+	SubmissionRoutes := r.Group("api/v1", middleware.AuthorizenJWT(jwtService))
+	{
+		SubmissionRoutes.POST("/user/submit", sc.Submit)
+	}
 
 	return r
 }
@@ -73,7 +86,9 @@ func ResultRouter() *gin.Engine {
 
 	// problem
 	rc := controller.NewResultController()
-	g.POST("/user/result_list", rc.ResultList)
-
+	ResultRoutes := r.Group("api/v1", middleware.AuthorizenJWT(jwtService))
+	{
+		ResultRoutes.POST("/user/result_list", rc.ResultList)
+	}
 	return r
 }

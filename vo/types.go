@@ -49,6 +49,7 @@ type LoginResponse struct {
 	Data struct {
 		UserID string
 	}
+	Token string
 }
 
 type LogoutRequest struct{}
@@ -66,13 +67,9 @@ type ProblemListRequest struct {
 	Page_Size int
 }
 type ProblemListResponse struct {
-	Code ErrNo
-	//	ProblemID         int
-	//	Status            string
-	//	Difficulty        string
-	//	Acceptance        string
-	//	Global_Acceptance string
+	Code        ErrNo
 	Problemlist []model.Problem
+	Username    string
 }
 type ProblemDetailRequest struct {
 	ProblemID int
@@ -85,6 +82,7 @@ type ProblemDetailResponse struct {
 	Difficulty        string
 	Acceptance        string
 	Global_Acceptance string
+	Username          string
 }
 
 // ==================== SUBMIT ====================

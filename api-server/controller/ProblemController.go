@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"ustoj-master/common"
@@ -10,6 +11,7 @@ import (
 	"ustoj-master/utils"
 	"ustoj-master/vo"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -33,23 +35,15 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 	var req vo.ProblemListRequest
 	//var problem []model.Problem
 	code := vo.OK
-	/*	var problemID = 0
-		var status = ""
-		var difficulty = ""
-		var acceptance = ""
-		var globalAcceptance = ""*/
 	var problemlist []model.Problem
 	var DBService service.DBService
-
+	var JWTService service.JWTService
+	var Username = ""
 	defer func() {
 		resp := vo.ProblemListResponse{
-			Code: code,
-			/*ProblemID:         problemID,
-			Status:            status,
-			Difficulty:        difficulty,
-			Acceptance:        acceptance,
-			Global_Acceptance: globalAcceptance,*/
+			Code:        code,
 			Problemlist: problemlist,
+			Username:    Username,
 		}
 		c.JSON(http.StatusOK, resp)
 		utils.LogReqRespBody(req, resp, "ReturnProblemPage")
@@ -58,31 +52,23 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 	var Page_size = req.Page_Size
 	println(Page_size)
 	problemlist = DBService.GetProblemList(problemlist)
-	/*if result := ctl.DB.Find(&problem); result.Error != nil {
-		log.Println("Error occured during get all problem information! ")
-		return
-	} else {
 
-		log.Println("The lenght of all problem :" + strconv.FormatInt(result.RowsAffected, 10))
-		/*result should be a slice*/
-	/*	for problemdetail := range problem {
-			modelList = append(modelList, model.Problem{
-				problemID:        problemdetail.ProblemID,
-				status:           problemdetail.Status,
-				difficulty:       problemdetail.Difficulty,
-				acceptance:       problemdetail.Acceptance,
-				globalAcceptance: problemdetail.GlobalAcceptance,
-			})
-		}
-		problemlist = problem
-		code = vo.UnknownError
-
-		return
-	}*/
 	if len(problemlist) == 0 {
 		code = vo.UserHasExisted
 		log.Println("CreateMember:UserExisted")
 	}
+	autoHeader := c.GetHeader("Authorization")
+	token, errToken := JWTService.ValidateToken(autoHeader)
+	if errToken != nil {
+		panic(errToken.Error())
+	}
+	claims := token.Claims.(jwt.MapClaims)
+	//name, err := strconv.ParseUint(fmt.Sprintf("%v", claims["Username"]), 10, 64)
+	name := fmt.Sprintf("%v", claims["Username"])
+	/*if err != nil {
+		panic(err.Error())
+	}*/
+	Username = name
 	return
 
 }
@@ -102,6 +88,8 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 	var acceptance = ""
 	var globalAcceptance = ""
 	var DBService service.DBService
+	var JWTService service.JWTService
+	var Username = ""
 	defer func() {
 		resp := vo.ProblemDetailResponse{
 			Code:              code,
@@ -111,29 +99,12 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 			Difficulty:        difficulty,
 			Acceptance:        acceptance,
 			Global_Acceptance: globalAcceptance,
+			Username:          Username,
 		}
 		c.JSON(http.StatusOK, resp)
 		utils.LogReqRespBody(req, resp, "ReturnProblemDescription")
 	}()
 
-	//descriptionModel = model.Description{ProblemID: req.ProblemID}
-	//problem = model.Problem{ProblemID: problemID, Status: status, Difficulty: difficulty, Acceptance: acceptance, GlobalAcceptance: globalAcceptance}
-	/*if err := ctl.DB.Where("problem_id =?", req.ProblemID).Take(&p).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			ctl.DB.First(&problem, req.ProblemID)
-			log.Println("Successfully find the problem detail information" + strconv.Itoa(problem.ProblemID))
-			problemID = problem.ProblemID
-			status = problem.Status
-			difficulty = problem.Difficulty
-			acceptance = problem.Acceptance
-			globalAcceptance = problem.GlobalAcceptance
-			return
-		} else {
-			code = vo.UnknownError
-			log.Println("Problem Information :Unknown-error while finding Problem information")
-			return
-		}
-	}*/
 	problem.ProblemID = req.ProblemID
 	p = DBService.ProblemDetail(req.ProblemID)
 	problemID = p.ProblemID
@@ -141,23 +112,23 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 	difficulty = p.Difficulty
 	acceptance = p.Acceptance
 	globalAcceptance = p.GlobalAcceptance
-	//ctl.DB.Find(&problem)
+
 	d = DBService.ProblemDescription(req.ProblemID)
 	description = string(d.Description)
-	/*if err := ctl.DB.Where("problem_id =?", req.ProblemID).Take(&d).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			ctl.DB.First(&descriptionModel)
-			log.Println("Successfully find the problem detail information" + string(descriptionModel.Description))
-			description = string(descriptionModel.Description)
-			return
-		} else {
-			code = vo.UnknownError
-			log.Println("Problem Information :Unknown-error while finding Problem information")
-			return
-		}
-	}*/
+
 	if problemID == 0 {
 		code = vo.UnknownError
 	}
+	autoHeader := c.GetHeader("Authorization")
+	token, errToken := JWTService.ValidateToken(autoHeader)
+	if errToken != nil {
+		panic(errToken.Error())
+	}
+	claims := token.Claims.(jwt.MapClaims)
+
+	name := fmt.Sprintf("%v", claims["Username"])
+
+	Username = name
 	return
+
 }

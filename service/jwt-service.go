@@ -13,7 +13,7 @@ type JWTService interface {
 	GenerateToken(username string) string
 	ValidateToken(token string) (*jwt.Token, error)
 }
-type jwtCustomClain struct {
+type jwtCustomClaim struct {
 	Username string `gorm:"varchar(20)"`
 	jwt.StandardClaims
 }
@@ -40,12 +40,13 @@ func getSecretKey() string {
 }
 
 func (j *jwtService) GenerateToken(Username string) string {
-	claims := &jwtCustomClain{
+	claims := &jwtCustomClaim{
 		Username,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().AddDate(1, 0, 0).Unix(),
-			Issuer:    j.issuer,
-			IssuedAt:  time.Now().Unix(),
+			//	Issuer:    j.issuer,
+			Issuer:   Username,
+			IssuedAt: time.Now().Unix(),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

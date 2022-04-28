@@ -28,12 +28,15 @@ func (ctl SubmissionController) Submit(c *gin.Context) {
 	var req vo.SubmissionRequest
 	var submission model.Submission
 	var DBService service.DBService
+	var JWTService service.JWTService
 	submission = model.Submission{ProblemID: req.ProblemID, Code: req.Code, Language: req.Language}
 	DBService.Submission(&submission)
+	autoHeader := c.GetHeader("Authorization")
+	token, errToken := JWTService.ValidateToken(autoHeader)
+	if errToken != nil {
+		panic(errToken.Error())
+	}
+	print(token)
 	return
-	/*	if err := ctl.DB.Create(&submission).Error; err != nil {
-			log.Println("Submission Error")
-			return
-		}
-		return*/
+
 }
