@@ -10,7 +10,7 @@ type Submission struct {
 	ProblemID      int       `gorm:"bigint"`
 	Username       string    `gorm:"varchar(20)"`
 	Language       string    `gorm:"varchar(20)"`
-	Code           string    `gorm:"varchar(20)"`
+	Code           string    `gorm:"mediumtext"`
 	Status         string    `gorm:"varchar(20)"`
 	RunTime        int       `gorm:"int"`
 }
