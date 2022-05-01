@@ -2,16 +2,20 @@ package controller
 
 import (
 	"context"
-	"errors"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
+	//"fmt"
 	"log"
 	"net/http"
 	"regexp"
+
+	//	"strconv"
 	"ustoj-master/common"
 	"ustoj-master/model"
+	"ustoj-master/service"
 	"ustoj-master/utils"
 	"ustoj-master/vo"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type IUserController interface {
@@ -25,15 +29,16 @@ type UserController struct {
 	Ctx context.Context
 }
 
-func NewUserController() IUserController {
+func NewUserController() IUserController { // Similar to the interface of service
 	return UserController{DB: common.GetDB(), Ctx: common.GetCtx()}
 }
 
 func (ctl UserController) Register(c *gin.Context) {
 	var req vo.RegisterRequest
-	var user, u model.User
+	//var user, u model.User
+	var user model.User
 	code := vo.OK
-
+	var DBService service.DBService
 	defer func() {
 		resp := vo.RegisterResponse{
 			Code: code,
@@ -48,7 +53,7 @@ func (ctl UserController) Register(c *gin.Context) {
 		return
 	}
 
-	//参数校验
+	//Parameter validation
 	tmpStr := req.Password
 	r1, _ := regexp.MatchString("^(\\w*[0-9]+\\w*[a-z]+\\w*[A-Z]+)|(\\w*[0-9]+\\w*[A-Z]+\\w*[a-z]+)$", tmpStr)
 	r2, _ := regexp.MatchString("^(\\w*[a-z]+\\w*[0-9]+\\w*[A-Z]+)|(\\w*[a-z]+\\w*[A-Z]+\\w*[0-9]+)$", tmpStr)
@@ -64,8 +69,8 @@ func (ctl UserController) Register(c *gin.Context) {
 	}
 
 	user = model.User{Username: req.Username, Password: req.Password, RoleId: 1}
-
-	if err := ctl.DB.Where("user_name = ?", req.Username).Take(&u).Error; err != nil {
+	code = DBService.CreateUser(&user)
+	/*if err := ctl.DB.Where("user_name = ?", req.Username).Take(&u).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			ctl.DB.Create(&user)
 			log.Println("CreateMember:Successfully create, username:" + user.Username)
@@ -75,9 +80,9 @@ func (ctl UserController) Register(c *gin.Context) {
 			log.Println("CreateMember:Unknown-error while creating")
 			return
 		}
-	}
+	}*/
 
-	//用户已经存在
+	//User existed
 	code = vo.UserHasExisted
 	log.Println("CreateMember:UserExisted")
 	return
@@ -86,6 +91,46 @@ func (ctl UserController) Register(c *gin.Context) {
 func (ctl UserController) Login(c *gin.Context) {
 	//TODO implement me
 	panic("implement me")
+	var req vo.LoginRequest
+	var user model.User
+	var loginobject vo.LoginResponse
+	var DBService service.DBService
+	var JWTService service.JWTService
+	var Token = ""
+	code := vo.OK
+	defer func() {
+		resp := vo.LoginResponse{
+			Code:  code,
+			Data:  loginobject.Data,
+			Token: Token,
+		}
+		c.JSON(http.StatusOK, resp)
+		utils.LogReqRespBody(req, resp, "XXXXXXXXXXX")
+	}()
+	if err := c.ShouldBindJSON(&req); err != nil {
+		code = vo.UnknownError
+		log.Println("Login: ShouldBindJSON error")
+		return
+	}
+	user = model.User{Username: req.Username, Password: req.Password, RoleId: 1}
+	loginobject.Data.UserID = DBService.Login(&user)
+	if loginobject.Data.UserID == "UnknownError" {
+		code = vo.UnknownError
+		Token = ""
+	} else {
+		Token = JWTService.GenerateToken(loginobject.Data.UserID)
+	}
+
+	/*	if err := ctl.DB.Where("user_name = ?", req.Username).Where("password =?", req.Password).Take(&u).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			loginobject.Data.UserID = u.Username
+		} else {
+			code = vo.UnknownError
+			log.Println("Not User record")
+			return
+		}
+	}*/
+
 }
 
 func (ctl UserController) Logout(c *gin.Context) {

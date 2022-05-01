@@ -1,5 +1,7 @@
 package vo
 
+import "ustoj-master/model"
+
 // 说明：
 // 1. 所提到的「位数」均以字节长度为准
 // 2. 所有的 ID 均为 int64（以 string 方式表现）
@@ -47,6 +49,7 @@ type LoginResponse struct {
 	Data struct {
 		UserID string
 	}
+	Token string
 }
 
 type LogoutRequest struct{}
@@ -59,6 +62,47 @@ type LogoutResponse struct {
 
 // ==================== PROBLEM LIST ====================
 
+type ProblemListRequest struct {
+	Page      int
+	Page_Size int
+}
+type ProblemListResponse struct {
+	Code        ErrNo
+	Problemlist []model.Problem
+	Username    string
+}
+type ProblemDetailRequest struct {
+	ProblemID int
+}
+type ProblemDetailResponse struct {
+	Code              ErrNo
+	ProblemID         int
+	Description       string
+	Status            string
+	Difficulty        string
+	Acceptance        string
+	Global_Acceptance string
+	Username          string
+}
+
 // ==================== SUBMIT ====================
+type SubmissionRequest struct {
+	ProblemID int
+	Language  string
+	Code      string
+}
 
 // ==================== RESULT ====================
+
+type ResultRequest struct {
+	ProblemID int
+	Username  string
+}
+type ResultResponse struct {
+	Code      ErrNo
+	ProblemID int
+	Username  string
+	Status    string
+	Language  string
+	RunTime   int
+}
