@@ -52,3 +52,7 @@ func InitConfig() {
 		panic(fmt.Errorf(err.Error()))
 	}
 }
+
+func GetConfig() Config {
+	return Cfg
+}

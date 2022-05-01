@@ -3,18 +3,17 @@ package controller
 import (
 	"fmt"
 	"github.com/robfig/cron/v3"
+	"ustoj-master/common"
 	"ustoj-master/dto"
 	"ustoj-master/scheduler/model"
 	"ustoj-master/service"
-
-	"ustoj-master/common"
 )
 
 var logger = common.LogInstance()
-var cfg = model.Cfg
 
 func RunDispatch(done func()) {
 	defer done()
+	cfg := model.GetConfig()
 
 	c := cron.New(cron.WithSeconds())
 	spec := fmt.Sprintf("*/%d * * * * ?", cfg.Scheduler.DispatchInterval)
