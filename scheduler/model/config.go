@@ -35,7 +35,9 @@ type Logger struct {
 }
 
 type Scheduler struct {
-	SubmissionNum int `yaml:"submissionNum"`
+	DispatchInterval   int `yaml:"dispatchInterval"`
+	DispatchNum        int `yaml:"dispatchNum"`
+	ReadResultInterval int `yaml:"readResultInterval"`
 }
 
 type Kubernetes struct {

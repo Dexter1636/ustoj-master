@@ -17,13 +17,14 @@ func RunDispatch(done func()) {
 	defer done()
 
 	c := cron.New(cron.WithSeconds())
-
-	spec := "*/2 * * * * ?"
+	spec := fmt.Sprintf("*/%d * * * * ?", cfg.Scheduler.DispatchInterval)
 	c.AddFunc(spec, func() {
 		logger.Infoln("cron RunDispatch")
 		// acquire n submissions
-		submissionList := make([]dto.SubmissionDto, 0, cfg.Scheduler.SubmissionNum)
-		service.GetNWaitingSubmissions(cfg.Scheduler.SubmissionNum, &submissionList)
+		submissionList := make([]dto.SubmissionDto, 0, cfg.Scheduler.DispatchNum)
+		service.GetNWaitingSubmissions(cfg.Scheduler.DispatchNum, &submissionList)
+		// update acquired submissions to status pending
+		service.UpdateSubmissionsToPending(&submissionList)
 		// acquire related info and call k8s service to run the jobs
 		// _code, caseList, _lang
 		for _, sub := range submissionList {
