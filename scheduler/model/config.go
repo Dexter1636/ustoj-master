@@ -10,6 +10,7 @@ type Config struct {
 	Server      Server     `yaml:"server"`
 	Datasource  Datasource `yaml:"datasource"`
 	Logger      Logger     `yaml:"logger"`
+	Scheduler   Scheduler  `yaml:"scheduler"`
 	Kubernetes  Kubernetes `yaml:"kubernetes"`
 }
 
@@ -31,6 +32,10 @@ type Logger struct {
 	Info      string `yaml:"info"`
 	Level     string `yaml:"level"`
 	WriteFile bool   `yaml:"writeFile"`
+}
+
+type Scheduler struct {
+	SubmissionNum int `yaml:"submissionNum"`
 }
 
 type Kubernetes struct {
