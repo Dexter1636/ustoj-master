@@ -4,12 +4,14 @@ import (
 	"time"
 )
 
-type SubmitJobStatus int
+type SubmitJobStatus string
 
 const (
-	JobRunning SubmitJobStatus = 0
-	JobSuccess SubmitJobStatus = 1
-	JobError   SubmitJobStatus = 2
+	JobPending SubmitJobStatus = "Pending"
+	JobRunning SubmitJobStatus = "Running"
+	JobSuccess SubmitJobStatus = "Succeeded"
+	JobFailed  SubmitJobStatus = "Failed"
+	JobUnknown SubmitJobStatus = "Unknown"
 )
 
 type Submission struct {

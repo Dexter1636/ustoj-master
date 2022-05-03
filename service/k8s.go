@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"strconv"
 	"ustoj-master/common"
+	"ustoj-master/dto"
 	"ustoj-master/model"
 
 	v1 "k8s.io/api/core/v1"
@@ -16,6 +18,14 @@ import (
 var logger = common.LogInstance()
 
 var c model.Cluster
+
+var PodJobConvMap = map[v1.PodPhase]model.SubmitJobStatus{
+	v1.PodPending:   model.JobPending,
+	v1.PodRunning:   model.JobRunning,
+	v1.PodSucceeded: model.JobSuccess,
+	v1.PodFailed:    model.JobFailed,
+	v1.PodUnknown:   model.JobUnknown,
+}
 
 func InitCluster(masterUrl string, masterConfigPath string) error {
 	c.InitKube(masterUrl, masterConfigPath)
@@ -52,7 +62,7 @@ func ListJob() (*v1.PodList, error) {
 	return list, nil
 }
 
-func ListRunningJob() (*v1.PodList, error) {
+func ListRunningJob() ([]dto.SubmissionDto, error) {
 	podClient, err := c.GetPodClient("default")
 	if err != nil {
 		return nil, err
@@ -64,12 +74,25 @@ func ListRunningJob() (*v1.PodList, error) {
 		LabelSelector: labels.Set(labelSelector.MatchLabels).String(),
 		FieldSelector: fieldSelector.String(),
 	})
-
 	if err != nil {
 		return nil, err
 	}
 
-	return list, nil
+	var result []dto.SubmissionDto
+	for _, pod := range list.Items {
+		sub_id, err := strconv.Atoi(pod.Labels["submit_id"])
+		if err != nil {
+			logger.Infoln(sub_id)
+			return nil, err
+		}
+		dto := dto.SubmissionDto{
+			SubmissionID: sub_id,
+			Status:       PodJobConvMap[pod.Status.Phase],
+		}
+		result = append(result, dto)
+	}
+
+	return result, nil
 }
 
 func CreateJob() error {

@@ -26,7 +26,7 @@ func MainJob() {
 		return
 	}
 	// logger.Infoln(strconv.Itoa(len(list.Items)) + " jobs are running.")
-	logger.Infoln(list.Items[1].Labels)
+	logger.Infoln(list)
 
 	// for _, job := range list.Items {
 	// 	logger.Infoln(job.Status.Phase)
