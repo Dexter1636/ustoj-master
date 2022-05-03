@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"strconv"
 	"ustoj-master/service"
 
 	"github.com/robfig/cron/v3"
@@ -26,9 +25,10 @@ func MainJob() {
 		logger.Errorln(err)
 		return
 	}
-	logger.Infoln(strconv.Itoa(len(list.Items)) + " jobs are running.")
+	// logger.Infoln(strconv.Itoa(len(list.Items)) + " jobs are running.")
+	logger.Infoln(list.Items[1].Labels)
 
-	for _, job := range list.Items {
-		logger.Infoln(job.Status.Phase)
-	}
+	// for _, job := range list.Items {
+	// 	logger.Infoln(job.Status.Phase)
+	// }
 }

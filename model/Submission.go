@@ -4,6 +4,14 @@ import (
 	"time"
 )
 
+type SubmitJobStatus int
+
+const (
+	JobRunning SubmitJobStatus = 0
+	JobSuccess SubmitJobStatus = 1
+	JobError   SubmitJobStatus = 2
+)
+
 type Submission struct {
 	SubmissionID   int       `gorm:"bigint"`
 	SubmissionTime time.Time `gorm:"timestamp"`
