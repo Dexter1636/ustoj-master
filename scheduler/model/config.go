@@ -2,7 +2,6 @@ package model
 
 import (
 	"fmt"
-
 	"github.com/spf13/viper"
 )
 
@@ -11,6 +10,7 @@ type Config struct {
 	Server      Server     `yaml:"server"`
 	Datasource  Datasource `yaml:"datasource"`
 	Logger      Logger     `yaml:"logger"`
+	Scheduler   Scheduler  `yaml:"scheduler"`
 	Kubernetes  Kubernetes `yaml:"kubernetes"`
 }
 
@@ -34,6 +34,12 @@ type Logger struct {
 	WriteFile bool   `yaml:"writeFile"`
 }
 
+type Scheduler struct {
+	DispatchInterval   int `yaml:"dispatchInterval"`
+	DispatchNum        int `yaml:"dispatchNum"`
+	ReadResultInterval int `yaml:"readResultInterval"`
+}
+
 type Kubernetes struct {
 	MasterUrl    string `yaml:"masrerUrl"`
 	MasterConfig string `yaml:"masterConfig"`
@@ -45,4 +51,8 @@ func InitConfig() {
 	if err := viper.Unmarshal(&Cfg); err != nil {
 		panic(fmt.Errorf(err.Error()))
 	}
+}
+
+func GetConfig() Config {
+	return Cfg
 }
