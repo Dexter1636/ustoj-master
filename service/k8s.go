@@ -30,10 +30,6 @@ var PodJobConvMap = map[v1.PodPhase]model.SubmitJobStatus{
 func InitCluster(masterUrl string, masterConfigPath string) error {
 	c.InitKube(masterUrl, masterConfigPath)
 
-	err := CreateJob()
-	if err != nil {
-		logger.Errorln(err)
-	}
 	return nil
 }
 
@@ -82,7 +78,7 @@ func ListRunningJob() ([]dto.SubmissionDto, error) {
 	for _, pod := range list.Items {
 		sub_id, err := strconv.Atoi(pod.Labels["submit_id"])
 		if err != nil {
-			logger.Infoln(sub_id)
+			logger.Errorln(sub_id)
 			return nil, err
 		}
 		dto := dto.SubmissionDto{

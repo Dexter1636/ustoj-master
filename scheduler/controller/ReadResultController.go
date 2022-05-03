@@ -26,6 +26,7 @@ func MainJob() {
 		return
 	}
 	// logger.Infoln(strconv.Itoa(len(list.Items)) + " jobs are running.")
+	logger.Infoln("=== job list:")
 	logger.Infoln(list)
 
 	// for _, job := range list.Items {
