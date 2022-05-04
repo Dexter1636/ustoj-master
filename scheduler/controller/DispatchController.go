@@ -23,8 +23,6 @@ func RunDispatch(done func()) {
 		// acquire n submissions
 		submissionList := make([]dto.SubmissionDto, 0, cfg.Scheduler.DispatchNum)
 		service.GetNWaitingSubmissions(cfg.Scheduler.DispatchNum, &submissionList)
-		// update acquired submissions to status pending
-		service.UpdateSubmissionsToPending(&submissionList)
 		// acquire related info and call k8s service to run the jobs
 		// _code, caseList, _lang
 		for _, sub := range submissionList {
@@ -34,6 +32,8 @@ func RunDispatch(done func()) {
 			fmt.Println(code, caseList, lang)
 			// TODO: call k8s service to run the jobs
 		}
+		// update acquired submissions to status pending
+		service.UpdateSubmissionsToPending(&submissionList)
 	})
 
 	c.Start()
