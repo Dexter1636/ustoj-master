@@ -14,6 +14,9 @@ logger:
   writeFile: true
   level: info
 
+scheduler:
+  dispatchInterval: 1
+
 kubernetes:
   masterUrl: https://192.168.31.80:6443
   masterConfig: /tmp/kubernetes_admin_config/admin.conf
