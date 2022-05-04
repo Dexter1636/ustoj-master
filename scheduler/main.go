@@ -1,7 +1,7 @@
 package main
 
 import (
-	"os"
+	"flag"
 	"sync"
 	"ustoj-master/common"
 	commonModel "ustoj-master/model"
@@ -12,7 +12,10 @@ import (
 )
 
 func main() {
-	common.ReadConfig(os.Args[1])
+	var configPath = flag.String("c", "/etc/ustoj/master-ticker/config", "the file path to config file")
+	flag.Parse()
+
+	common.ReadConfig(*configPath)
 	model.InitConfig()
 	common.InitLogger(appConfig.Cfg.Logger.WriteFile)
 	common.InitDb(appConfig.Cfg.Logger.Level)

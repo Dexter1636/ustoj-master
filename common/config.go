@@ -2,8 +2,9 @@ package common
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
 	"log"
+
+	"github.com/spf13/viper"
 )
 
 func ReadConfig(configFile string) {
