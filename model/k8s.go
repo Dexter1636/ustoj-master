@@ -8,6 +8,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	appsv1 "k8s.io/client-go/kubernetes/typed/apps/v1"
+	batchv1 "k8s.io/client-go/kubernetes/typed/batch/v1"
 	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -102,4 +103,20 @@ func (c *Cluster) GetPodClient(namespace string) (corev1.PodInterface, error) {
 	}
 
 	return clientSet.CoreV1().Pods(namespace), nil
+}
+
+func (c *Cluster) GetJobClient(namespace string) (batchv1.JobInterface, error) {
+	kubeConfig, err := c.KubeConfig()
+	if err != nil {
+		logger.Error("Failed to create KubeConfig , error : %v", err)
+		return nil, err
+	}
+
+	clientSet, err := kubernetes.NewForConfig(kubeConfig)
+	if err != nil {
+		logger.Error("Failed to create clientset , error : %v", err)
+		return nil, err
+	}
+
+	return clientSet.BatchV1().Jobs(namespace), nil
 }

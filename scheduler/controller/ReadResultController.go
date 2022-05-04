@@ -19,17 +19,13 @@ func RunReadResult(done func()) {
 }
 
 func MainJob() {
-	list, err := service.ListRunningJob()
+	list, err := service.ListJobById([]int{1})
 	if err != nil {
 		logger.Errorln("List Job error")
 		logger.Errorln(err)
 		return
 	}
-	// logger.Infoln(strconv.Itoa(len(list.Items)) + " jobs are running.")
 	logger.Infoln("=== job list:")
 	logger.Infoln(list)
 
-	// for _, job := range list.Items {
-	// 	logger.Infoln(job.Status.Phase)
-	// }
 }
