@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	var configPath = flag.String("c", "/etc/ustoj/master-ticker/config", "the file path to config file")
+	var configPath = flag.String("c", "/etc/ustoj/master-ticker/config.yaml", "the file path to config file")
 	flag.Parse()
 
 	common.ReadConfig(*configPath)

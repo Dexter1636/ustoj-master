@@ -177,7 +177,7 @@ func CreateJob(submitId int, caseList []string, language string) error {
 	*kind = "Pod"
 	*apiVer = "v1"
 	*podName = "job-sumbission-" + submitIdStr
-	*imageName = "debian"
+	*imageName = "python"
 	*pullPolicy = corev1.PullIfNotPresent
 	*restartPolicy = corev1.RestartPolicyOnFailure
 	caseArrayStr := "("
@@ -191,18 +191,18 @@ func CreateJob(submitId int, caseList []string, language string) error {
 		Image:   imageName,
 		Command: []string{"/bin/bash", "-c", "--"},
 		Args: []string{
-			// `
-			// array=` + caseArrayStr + `
-			// for element in ${array[@]}
-			// do
-			// echo $element
-			// done
-			// `,
+			`
+			array=` + caseArrayStr + `
+			for element in ${array[@]}
+			do
+			python run.py $element
+			done
+			`,
 			"echo 1",
 		},
 		// WorkingDir:             new(string),
-		Env: []appcorev1.EnvVarApplyConfiguration{},
-		// VolumeMounts:           []corev1.VolumeMountApplyConfiguration{},
+		Env:          []appcorev1.EnvVarApplyConfiguration{},
+		VolumeMounts: []appcorev1.VolumeMountApplyConfiguration{},
 		// LivenessProbe:          &corev1.ProbeApplyConfiguration{},
 		// StartupProbe:           &corev1.ProbeApplyConfiguration{},
 		ImagePullPolicy: pullPolicy,
@@ -223,7 +223,43 @@ func CreateJob(submitId int, caseList []string, language string) error {
 		},
 		Spec: &appcorev1.PodSpecApplyConfiguration{
 			// Volumes:                       []corev1.VolumeApplyConfiguration{},
-			Containers:    []appcorev1.ContainerApplyConfiguration{container},
+			Containers: []appcorev1.ContainerApplyConfiguration{container},
+			Volumes: []appcorev1.VolumeApplyConfiguration{
+				{
+					Name: podName,
+					VolumeSourceApplyConfiguration: appcorev1.VolumeSourceApplyConfiguration{
+						HostPath:              &appcorev1.HostPathVolumeSourceApplyConfiguration{},
+						EmptyDir:              &appcorev1.EmptyDirVolumeSourceApplyConfiguration{},
+						GCEPersistentDisk:     &appcorev1.GCEPersistentDiskVolumeSourceApplyConfiguration{},
+						AWSElasticBlockStore:  &appcorev1.AWSElasticBlockStoreVolumeSourceApplyConfiguration{},
+						GitRepo:               &appcorev1.GitRepoVolumeSourceApplyConfiguration{},
+						Secret:                &appcorev1.SecretVolumeSourceApplyConfiguration{},
+						NFS:                   &appcorev1.NFSVolumeSourceApplyConfiguration{},
+						ISCSI:                 &appcorev1.ISCSIVolumeSourceApplyConfiguration{},
+						Glusterfs:             &appcorev1.GlusterfsVolumeSourceApplyConfiguration{},
+						PersistentVolumeClaim: &appcorev1.PersistentVolumeClaimVolumeSourceApplyConfiguration{},
+						RBD:                   &appcorev1.RBDVolumeSourceApplyConfiguration{},
+						FlexVolume:            &appcorev1.FlexVolumeSourceApplyConfiguration{},
+						Cinder:                &appcorev1.CinderVolumeSourceApplyConfiguration{},
+						CephFS:                &appcorev1.CephFSVolumeSourceApplyConfiguration{},
+						Flocker:               &appcorev1.FlockerVolumeSourceApplyConfiguration{},
+						DownwardAPI:           &appcorev1.DownwardAPIVolumeSourceApplyConfiguration{},
+						FC:                    &appcorev1.FCVolumeSourceApplyConfiguration{},
+						AzureFile:             &appcorev1.AzureFileVolumeSourceApplyConfiguration{},
+						ConfigMap:             &appcorev1.ConfigMapVolumeSourceApplyConfiguration{},
+						VsphereVolume:         &appcorev1.VsphereVirtualDiskVolumeSourceApplyConfiguration{},
+						Quobyte:               &appcorev1.QuobyteVolumeSourceApplyConfiguration{},
+						AzureDisk:             &appcorev1.AzureDiskVolumeSourceApplyConfiguration{},
+						PhotonPersistentDisk:  &appcorev1.PhotonPersistentDiskVolumeSourceApplyConfiguration{},
+						Projected:             &appcorev1.ProjectedVolumeSourceApplyConfiguration{},
+						PortworxVolume:        &appcorev1.PortworxVolumeSourceApplyConfiguration{},
+						ScaleIO:               &appcorev1.ScaleIOVolumeSourceApplyConfiguration{},
+						StorageOS:             &appcorev1.StorageOSVolumeSourceApplyConfiguration{},
+						CSI:                   &appcorev1.CSIVolumeSourceApplyConfiguration{},
+						Ephemeral:             &appcorev1.EphemeralVolumeSourceApplyConfiguration{},
+					},
+				},
+			},
 			RestartPolicy: restartPolicy,
 			NodeSelector: map[string]string{
 				"ustoj": "worker",
