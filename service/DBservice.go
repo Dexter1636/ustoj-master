@@ -27,7 +27,8 @@ type DBConnect struct {
 	Ctx context.Context
 }
 
-func NewDBConnect(DB *gorm.DB) DBService { // Similar to the interface of service
+//func NewDBConnect(DB *gorm.DB) DBService { // Similar to the interface of service
+func NewDBConnect() DBService { // Similar to the interface of service
 	return &DBConnect{DB: common.GetDB(), Ctx: common.GetCtx()}
 }
 

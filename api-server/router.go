@@ -55,8 +55,8 @@ func ProblemRouter() *gin.Engine {
 	pc := controller.NewProblemController()
 	ProblemRoutes := r.Group("api/v1", middleware.AuthorizenJWT(jwtService))
 	{
-		ProblemRoutes.POST("/user/problem_list", pc.ProblemList)
-		ProblemRoutes.POST("/user/problem_detail", pc.ProblemDetail)
+		ProblemRoutes.GET("/user/problem_list", pc.ProblemList)
+		ProblemRoutes.GET("/user/problem_detail", pc.ProblemDetail)
 	}
 	return r
 }
@@ -75,7 +75,7 @@ func SubmissionRouter() *gin.Engine {
 	sc := controller.NewSubmissionController()
 	SubmissionRoutes := r.Group("api/v1", middleware.AuthorizenJWT(jwtService))
 	{
-		SubmissionRoutes.POST("/user/submit", sc.Submit)
+		SubmissionRoutes.GET("/user/submit", sc.Submit)
 	}
 
 	return r
@@ -94,7 +94,7 @@ func ResultRouter() *gin.Engine {
 	rc := controller.NewResultController()
 	ResultRoutes := r.Group("api/v1", middleware.AuthorizenJWT(jwtService))
 	{
-		ResultRoutes.POST("/user/result_list", rc.ResultList)
+		ResultRoutes.GET("/user/result_list", rc.ResultList)
 	}
 	return r
 }

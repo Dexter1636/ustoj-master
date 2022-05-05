@@ -27,8 +27,8 @@ func NewSubmissionController() ISubmissionController { // Similar to the interfa
 func (ctl SubmissionController) Submit(c *gin.Context) {
 	var req vo.SubmissionRequest
 	var submission model.Submission
-	var DBService service.DBService
-	var JWTService service.JWTService
+	DBService := service.NewDBConnect()
+	JWTService := service.NewJWTService()
 	submission = model.Submission{ProblemID: req.ProblemID, Code: req.Code, Language: req.Language}
 	DBService.Submission(&submission)
 	autoHeader := c.GetHeader("Authorization")

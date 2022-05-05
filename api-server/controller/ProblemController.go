@@ -8,7 +8,6 @@ import (
 	"ustoj-master/common"
 	"ustoj-master/model"
 	"ustoj-master/service"
-	"ustoj-master/utils"
 	"ustoj-master/vo"
 
 	"github.com/dgrijalva/jwt-go"
@@ -75,8 +74,7 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 }
 
 func (ctl ProblemController) ProblemDetail(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
+
 	var req vo.ProblemDetailRequest
 	var problem, p model.Problem
 	//	var descriptionModel, d model.Description
@@ -88,8 +86,8 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 	var difficulty = ""
 	var acceptance = ""
 	var globalAcceptance = ""
-	var DBService service.DBService
-	var JWTService service.JWTService
+	DBService := service.NewDBConnect()
+	JWTService := service.NewJWTService()
 	var Username = ""
 	defer func() {
 		resp := vo.ProblemDetailResponse{
@@ -103,9 +101,13 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 			Username:          Username,
 		}
 		c.JSON(http.StatusOK, resp)
-		utils.LogReqRespBody(req, resp, "ReturnProblemDescription")
+		//utils.LogReqRespBody(req, resp, "ReturnProblemDescription")
 	}()
-
+	if err := c.BindQuery(&req); err != nil {
+		code = vo.UnknownError
+		log.Println("ProblemList: BindQuery error")
+		return
+	}
 	problem.ProblemID = req.ProblemID
 	p = DBService.ProblemDetail(req.ProblemID)
 	problemID = p.ProblemID
