@@ -2,17 +2,20 @@ package common
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+	"log"
+
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
+	gormlogger "gorm.io/gorm/logger"
 )
 
 var DB *gorm.DB
 var Ctx context.Context
 
-func InitDb() {
+func InitDb(loggerLevel string) {
 	// Capture connection properties
 	//driverName := viper.GetString("datasource.driverName")
 	host := viper.GetString("datasource.host")
@@ -24,26 +27,45 @@ func InitDb() {
 	//loggerLevel := viper.GetString("logger.level")
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=true",
 		username, password, host, port, database, charset)
-	// config
-	config := &gorm.Config{}
-	if env == "production" {
-		config.Logger = logger.New(fileLogger, logger.Config{LogLevel: logger.Info, Colorful: false})
-	} else {
-		config.Logger = logger.Default.LogMode(logger.Info)
+	// create database if not exist
+	temp_db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=utf8&parseTime=True&loc=Local",
+		username, password, host, port))
+	if err != nil {
+		panic(err)
 	}
+	defer temp_db.Close()
+	_, err = temp_db.Exec("CREATE DATABASE IF NOT EXISTS " + database)
+	if err != nil {
+		panic(err)
+	}
+	// config
+	var lvl gormlogger.LogLevel
+	if loggerLevel == "Warn" {
+		lvl = gormlogger.Warn
+	} else {
+		lvl = gormlogger.Info
+	}
+	newLogger := gormlogger.New(
+		log.New(logger.Out, "\r\n", log.LstdFlags),
+		gormlogger.Config{
+			LogLevel: lvl,
+		},
+	)
+	config := &gorm.Config{}
+	config.Logger = newLogger
 	// Get a database handle
 	db, err := gorm.Open(mysql.Open(dsn), config)
 	if err != nil {
-		panic("failed to connect to database, err: " + err.Error())
+		logger.Panicln("failed to connect to database, err: " + err.Error())
 	}
 	// set connection pool size
 	sqlDB, err := db.DB()
 	if err != nil {
-		panic("failed to config db connection pool, err: " + err.Error())
+		logger.Panicln("failed to config db connection pool, err: " + err.Error())
 	}
 	sqlDB.SetMaxOpenConns(190)
 	DB = db
-	fmt.Println("Connected to database.")
+	logger.Info("Connected to database.")
 }
 
 func GetDB() *gorm.DB {
@@ -52,4 +74,15 @@ func GetDB() *gorm.DB {
 
 func GetCtx() context.Context {
 	return Ctx
+}
+
+func CreateTableIfNotExists(modelType interface{}) error {
+	var err error
+	if err = DB.
+		Set("gorm:table_options", "ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8").
+		AutoMigrate(modelType); err != nil {
+		logger.Errorln(err)
+		logger.Errorf("AutoMigrate failed! table = %s", modelType)
+	}
+	return err
 }

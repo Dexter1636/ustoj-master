@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func InitConfig(configFile string) {
+func ReadConfig(configFile string) {
 	viper.SetConfigFile(configFile)
 	if err := viper.ReadInConfig(); err != nil {
 		panic(fmt.Errorf(err.Error()))
