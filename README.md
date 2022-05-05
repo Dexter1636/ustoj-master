@@ -54,17 +54,28 @@ This is for the course project of CSIT6000O Advanced Cloud Computing, which incl
     ```
     cd api-server
     go build -o build/
-    ./api-server <config-file-path>
+    ./build/api-server <config-file-path>
     
     cd scheduler
     go build -o build/
-    ./scheduler <config-file-path>
+    ./build/scheduler <config-file-path>
     ```
+
+## Build Docker image
+
+1. For api server, run the following command under root directory:
+```bash
+docker build -f Dockerfile-apiserver . -t ustoj/api-server
+```
+2. For scheduler, run the following command under root directory:
+```bash
+docker build -f Dockerfile-scheduler . -t ustoj/scheduler
+```
 
 ## Note
 
 Do NOT track `application.yaml` and `test.yaml` since they contain sensitive data.
 
-# Documents
+## Documents
 
 - [Database](doc/database.md)
