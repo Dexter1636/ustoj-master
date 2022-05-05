@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"fmt"
+	"ustoj-master/scheduler/model"
 	"ustoj-master/service"
 
 	"github.com/robfig/cron/v3"
@@ -8,10 +10,11 @@ import (
 
 func RunReadResult(done func()) {
 	defer done()
+	cfg := model.GetConfig()
 
 	c := cron.New(cron.WithSeconds())
 
-	spec := "*/2 * * * * ?"
+	spec := fmt.Sprintf("*/%d * * * * ?", cfg.Scheduler.ReadResultInterval)
 	c.AddFunc(spec, MainJob)
 
 	c.Start()
