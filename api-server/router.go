@@ -26,7 +26,7 @@ func RegisterRouter() *gin.Engine {
 	uc := controller.NewUserController()
 	authRoutes := r.Group("/api/vi")
 	{
-		authRoutes.POST("/user/create", uc.Register)
+		authRoutes.POST("/user/register", uc.Register)
 		authRoutes.POST("/user/login", uc.Login)
 		authRoutes.POST("/user/logout", uc.Logout)
 	}
