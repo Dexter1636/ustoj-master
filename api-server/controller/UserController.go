@@ -5,8 +5,6 @@ import (
 	//"fmt"
 	"log"
 	"net/http"
-	"regexp"
-
 	//	"strconv"
 	"ustoj-master/common"
 	"ustoj-master/model"
@@ -38,7 +36,7 @@ func (ctl UserController) Register(c *gin.Context) {
 	//var user, u model.User
 	var user model.User
 	code := vo.OK
-	var DBService service.DBService
+	DBService := service.NewDBConnect()
 	defer func() {
 		resp := vo.RegisterResponse{
 			Code: code,
@@ -46,29 +44,28 @@ func (ctl UserController) Register(c *gin.Context) {
 		c.JSON(http.StatusOK, resp)
 		utils.LogReqRespBody(req, resp, "CreateMember")
 	}()
-
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBindQuery(&req); err != nil {
 		code = vo.UnknownError
 		log.Println("CreateMember: ShouldBindJSON error")
 		return
 	}
-
 	//Parameter validation
-	tmpStr := req.Password
-	r1, _ := regexp.MatchString("^(\\w*[0-9]+\\w*[a-z]+\\w*[A-Z]+)|(\\w*[0-9]+\\w*[A-Z]+\\w*[a-z]+)$", tmpStr)
-	r2, _ := regexp.MatchString("^(\\w*[a-z]+\\w*[0-9]+\\w*[A-Z]+)|(\\w*[a-z]+\\w*[A-Z]+\\w*[0-9]+)$", tmpStr)
-	r3, _ := regexp.MatchString("^(\\w*[A-Z]+\\w*[a-z]+\\w*[0-9]+)|(\\w*[A-Z]+\\w*[0-9]+\\w*[a-z]+)$", tmpStr)
-	ru, _ := regexp.MatchString("^([a-z]|[A-Z])*$", req.Username)
-	rp := r1 || r2 || r3
-
-	if (len(req.Password) > 20 || len(req.Password) < 8 || !rp) ||
-		(len(req.Username) < 8 || len(req.Username) > 20 || !ru) {
-		code = vo.ParamInvalid
-		log.Println("CreateMember:ParamInvalid")
-		return
-	}
+	//tmpStr := req.Password
+	//r1, _ := regexp.MatchString("^(\\w*[0-9]+\\w*[a-z]+\\w*[A-Z]+)|(\\w*[0-9]+\\w*[A-Z]+\\w*[a-z]+)$", tmpStr)
+	//r2, _ := regexp.MatchString("^(\\w*[a-z]+\\w*[0-9]+\\w*[A-Z]+)|(\\w*[a-z]+\\w*[A-Z]+\\w*[0-9]+)$", tmpStr)
+	//r3, _ := regexp.MatchString("^(\\w*[A-Z]+\\w*[a-z]+\\w*[0-9]+)|(\\w*[A-Z]+\\w*[0-9]+\\w*[a-z]+)$", tmpStr)
+	//ru, _ := regexp.MatchString("^([a-z]|[A-Z])*$", req.Username)
+	//rp := r1 || r2 || r3
+	//
+	//if (len(req.Password) > 20 || len(req.Password) < 8 || !rp) ||
+	//	(len(req.Username) < 8 || len(req.Username) > 20 || !ru) {
+	//	code = vo.ParamInvalid
+	//	log.Println("CreateMember:ParamInvalid")
+	//	return
+	//}
 
 	user = model.User{Username: req.Username, Password: req.Password, RoleId: 1}
+	log.Println("username:" + user.Username + "password:" + user.Password)
 	code = DBService.CreateUser(&user)
 	/*if err := ctl.DB.Where("user_name = ?", req.Username).Take(&u).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -83,8 +80,8 @@ func (ctl UserController) Register(c *gin.Context) {
 	}*/
 
 	//User existed
-	code = vo.UserHasExisted
-	log.Println("CreateMember:UserExisted")
+	//code = vo.UserHasExisted
+	//log.Println("CreateMember:UserExisted")
 	return
 }
 
