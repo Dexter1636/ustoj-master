@@ -27,6 +27,7 @@ func NewSubmissionController() ISubmissionController { // Similar to the interfa
 func (ctl SubmissionController) Submit(c *gin.Context) {
 	var req vo.SubmissionRequest
 	var submission model.Submission
+	var logger = common.LogInstance()
 	DBService := service.NewDBConnect()
 	JWTService := service.NewJWTService()
 	submission = model.Submission{ProblemID: req.ProblemID, Code: req.Code, Language: req.Language}
@@ -36,7 +37,7 @@ func (ctl SubmissionController) Submit(c *gin.Context) {
 	if errToken != nil {
 		panic(errToken.Error())
 	}
-	print(token)
+	logger.Infoln(token)
 	return
 
 }

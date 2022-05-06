@@ -37,6 +37,7 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 	var problemlist []model.Problem
 	DBService := service.NewDBConnect()
 	JWTService := service.NewJWTService()
+	var logger = common.LogInstance()
 	var Username = ""
 	defer func() {
 		resp := vo.ProblemListResponse{
@@ -50,10 +51,11 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 	var req vo.ProblemListRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
 		code = vo.UnknownError
-		log.Print("ProblemList: BindQuery error")
+		//log.Print("ProblemList: BindQuery error")
+		logger.Infoln("ProblemList: BindQuery error")
 		return
 	}
-	log.Print("ProblemList: page size: %+v\n", req.Page_Size)
+	logger.Infoln("ProblemList: page size: %+v\n", req.Page_Size)
 	problemlist = DBService.GetProblemList(problemlist)
 	autoHeader := c.GetHeader("Authorization")
 	token, errToken := JWTService.ValidateToken(autoHeader)
@@ -84,6 +86,7 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 	var globalAcceptance = ""
 	DBService := service.NewDBConnect()
 	JWTService := service.NewJWTService()
+	var logger = common.LogInstance()
 	var Username = ""
 	defer func() {
 		resp := vo.ProblemDetailResponse{
@@ -101,7 +104,7 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 	}()
 	if err := c.BindQuery(&req); err != nil {
 		code = vo.UnknownError
-		log.Print("ProblemList: BindQuery error")
+		logger.Infoln("ProblemList: BindQuery error")
 		return
 	}
 	problem.ProblemID = req.ProblemID

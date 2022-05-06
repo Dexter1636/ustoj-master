@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"ustoj-master/common"
 	"ustoj-master/model"
@@ -38,6 +37,7 @@ func (ctl ResultController) ResultList(c *gin.Context) {
 	code := vo.OK
 	DBService := service.NewDBConnect()
 	JWTService := service.NewJWTService()
+	var logger = common.LogInstance()
 	defer func() {
 		resp := vo.ResultResponse{
 			Code:      code,
@@ -52,7 +52,7 @@ func (ctl ResultController) ResultList(c *gin.Context) {
 	}()
 	if err := c.BindQuery(&req); err != nil {
 		code = vo.UnknownError
-		log.Println("ProblemList: BindQuery error")
+		logger.Infoln("ProblemList: BindQuery error")
 		return
 	}
 	submission = model.Submission{ProblemID: req.ProblemID, Username: req.Username}
@@ -71,6 +71,6 @@ func (ctl ResultController) ResultList(c *gin.Context) {
 	if errToken != nil {
 		panic(errToken.Error())
 	}
-	print(token)
+	logger.Infoln(token)
 	return
 }

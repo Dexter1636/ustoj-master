@@ -3,7 +3,7 @@ package controller
 import (
 	"context"
 	//"fmt"
-	"log"
+
 	"net/http"
 	//	"strconv"
 	"ustoj-master/common"
@@ -35,6 +35,7 @@ func (ctl UserController) Register(c *gin.Context) {
 	var req vo.RegisterRequest
 	//var user, u model.User
 	var user model.User
+	var logger = common.LogInstance()
 	code := vo.OK
 	DBService := service.NewDBConnect()
 	defer func() {
@@ -46,12 +47,12 @@ func (ctl UserController) Register(c *gin.Context) {
 	}()
 	if err := c.ShouldBind(&req); err != nil {
 		code = vo.UnknownError
-		log.Println("CreateMember: ShouldBindJSON error")
+		logger.Infoln("CreateMember: ShouldBindJSON error")
 		return
 	}
 
 	user = model.User{Username: req.Username, Password: req.Password, RoleId: 1}
-	log.Println("username:" + user.Username + "password:" + user.Password)
+	logger.Infoln("username:" + user.Username + "password:" + user.Password)
 	code = DBService.CreateUser(&user)
 	return
 }
@@ -62,6 +63,7 @@ func (ctl UserController) Login(c *gin.Context) {
 	var loginobject vo.LoginResponse
 	DBService := service.NewDBConnect()
 	JWTService := service.NewJWTService()
+	var logger = common.LogInstance()
 	var Token = ""
 	code := vo.OK
 	defer func() {
@@ -75,7 +77,7 @@ func (ctl UserController) Login(c *gin.Context) {
 	}()
 	if err := c.ShouldBind(&req); err != nil {
 		code = vo.UnknownError
-		log.Println("Login: ShouldBindJSON error")
+		logger.Infoln("Login: ShouldBindJSON error")
 		return
 	}
 	user = model.User{Username: req.Username, Password: req.Password, RoleId: 1}
