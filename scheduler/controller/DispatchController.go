@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"strconv"
 	"ustoj-master/common"
 	"ustoj-master/dto"
 	"ustoj-master/scheduler/model"
@@ -21,21 +22,28 @@ func RunDispatch(done func()) {
 	c.AddFunc(spec, func() {
 		logger.Infoln("cron RunDispatch")
 		// acquire n submissions
-		submissionList := make([]dto.SubmissionDto, 0, cfg.Scheduler.DispatchNum)
-		service.GetNWaitingSubmissions(cfg.Scheduler.DispatchNum, &submissionList)
+		submissionDtoList := make([]dto.SubmissionDto, 0, cfg.Scheduler.DispatchNum)
+		service.GetNWaitingSubmissions(cfg.Scheduler.DispatchNum, &submissionDtoList)
 		// acquire related info and call k8s service to run the jobs
 		// _code, caseList, _lang
-		for _, sub := range submissionList {
-			subId := sub.SubmissionID
-			code := sub.Code
+		for _, subDto := range submissionDtoList {
+			subId := subDto.SubmissionID
+			code := subDto.Code
 			caseList := make([]string, 0, 8)
-			lang := sub.Language
+			lang := subDto.Language
 			fmt.Println(code, caseList, lang)
-			// TODO: call k8s service to run the jobs
-			service.CreateJob(subId, caseList, lang)
+			// write code snippet to file system
+			if err := service.WriteCodeToFile(code, cfg.DataPath.SubmitPath+strconv.Itoa(subId)+"/code"); err != nil {
+				service.UpdateSubmissionToInternalError(subDto)
+			}
+			// call k8s service to run the jobs
+			if err := service.CreateJob(subId, caseList, lang); err != nil {
+				service.UpdateSubmissionToInternalError(subDto)
+			} else {
+				// update acquired submissions to status pending
+				service.UpdateSubmissionToPending(subDto)
+			}
 		}
-		// update acquired submissions to status pending
-		service.UpdateSubmissionsToPending(&submissionList)
 	})
 
 	c.Start()
