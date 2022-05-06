@@ -25,13 +25,14 @@ type ProblemController struct {
 	Ctx context.Context
 }
 
+//var logger = common.LogInstance()
+
 func NewProblemController() IProblemController { // Similar to the interface of service
 	//return ProblemController{DB: common.GetDB(), Ctx: common.GetCtx()}
 	return ProblemController{DB: common.GetDB(), Ctx: common.GetCtx()}
 }
 
 func (ctl ProblemController) ProblemList(c *gin.Context) {
-	var req vo.ProblemListRequest
 	code := vo.OK
 	var problemlist []model.Problem
 	DBService := service.NewDBConnect()
@@ -46,19 +47,15 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 		c.JSON(http.StatusOK, resp)
 		//utils.LogReqRespBody(req, resp, "ReturnProblemPage")
 	}()
-	if err := c.BindQuery(&req); err != nil {
+	var req vo.ProblemListRequest
+
+	if err := c.ShouldBindQuery(&req); err != nil {
 		code = vo.UnknownError
-		log.Println("ProblemList: BindQuery error")
+		log.Print("ProblemList: BindQuery error")
 		return
 	}
-	//var Page_size = req.Page_Size
-	//println(Page_size)
+	log.Print("ProblemList: page size: %+v\n", req.Page_Size)
 	problemlist = DBService.GetProblemList(problemlist)
-
-	//if len(problemlist) == 0 {
-	//	//code = vo.UserHasExisted
-	//	log.Println("No problem ")
-	//}
 	autoHeader := c.GetHeader("Authorization")
 	token, errToken := JWTService.ValidateToken(autoHeader)
 	if errToken != nil {
@@ -67,7 +64,8 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 	claims := token.Claims.(jwt.MapClaims)
 	//name, err := strconv.ParseUint(fmt.Sprintf("%v", claims["Username"]), 10, 64)
 	name := fmt.Sprintf("%v", claims["Username"])
-	log.Println(name)
+	log.Print(name)
+
 	Username = name
 	return
 
@@ -105,7 +103,7 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 	}()
 	if err := c.BindQuery(&req); err != nil {
 		code = vo.UnknownError
-		log.Println("ProblemList: BindQuery error")
+		log.Print("ProblemList: BindQuery error")
 		return
 	}
 	problem.ProblemID = req.ProblemID
