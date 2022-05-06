@@ -2,6 +2,10 @@ package controller
 
 import (
 	"context"
+	"github.com/dgrijalva/jwt-go"
+	"log"
+	"net/http"
+	"time"
 	"ustoj-master/common"
 	"ustoj-master/model"
 	"ustoj-master/service"
@@ -29,14 +33,41 @@ func (ctl SubmissionController) Submit(c *gin.Context) {
 	var submission model.Submission
 	DBService := service.NewDBConnect()
 	JWTService := service.NewJWTService()
-	submission = model.Submission{ProblemID: req.ProblemID, Code: req.Code, Language: req.Language}
-	DBService.Submission(&submission)
-	autoHeader := c.GetHeader("Authorization")
-	token, errToken := JWTService.ValidateToken(autoHeader)
-	if errToken != nil {
-		panic(errToken.Error())
+	code := vo.OK
+	defer func() {
+		resp := vo.SubmissionResponse{
+			Code: code,
+		}
+		c.JSON(http.StatusOK, resp)
+	}()
+	if err := c.BindQuery(&req); err != nil {
+		log.Println("ProblemList: BindQuery error")
+		return
+	} else {
+		log.Printf("language: %v\n Code: %v\n", req.Language, req.Code)
 	}
-	print(token)
+	authHeader := c.GetHeader("Authorization")
+	token, err := JWTService.ValidateToken(authHeader)
+	if token.Valid {
+		claims := token.Claims.(jwt.MapClaims)
+		log.Println("Claim[issuer]:", claims["issuer"])
+	} else {
+		log.Print(err)
+		code = vo.UnknownError
+		resp := vo.SubmissionResponse{
+			Code: code,
+		}
+		c.AbortWithStatusJSON(http.StatusUnauthorized, resp)
+		return
+	}
+
+	submission = model.Submission{
+		SubmissionTime: time.Now(),
+		ProblemID:      req.ProblemID,
+		Code:           req.Code,
+		Language:       req.Language,
+	}
+	DBService.Submission(&submission)
 	return
 
 }

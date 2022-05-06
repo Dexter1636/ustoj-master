@@ -51,8 +51,7 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 		log.Println("ProblemList: BindQuery error")
 		return
 	}
-	//var Page_size = req.Page_Size
-	//println(Page_size)
+	log.Printf("ProblemList: page size: %+v\n", req.Page_Size)
 	problemlist = DBService.GetProblemList(problemlist)
 
 	//if len(problemlist) == 0 {

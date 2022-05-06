@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"ustoj-master/api-server/controller"
 	"ustoj-master/middleware"
 	"ustoj-master/service"
@@ -12,8 +13,28 @@ var (
 	jwtService service.JWTService = service.NewJWTService()
 )
 
+func Cors() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		method := c.Request.Method
+
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token")
+		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+		c.Header("Access-Control-Allow-Credentials", "true")
+
+		//放行所有OPTIONS方法
+		if method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+		}
+		// 处理请求
+		c.Next()
+	}
+}
+
 func RegisterRouter() *gin.Engine {
 	r := gin.Default()
+	r.Use(Cors())
 
 	r.Use(middleware.Recovery())
 
@@ -36,6 +57,16 @@ func RegisterRouter() *gin.Engine {
 	{
 		ProblemRoutes.GET("/user/problem_list", pc.ProblemList)
 		ProblemRoutes.GET("/user/problem_detail", pc.ProblemDetail)
+	}
+	sc := controller.NewSubmissionController()
+	SubmissionRoutes := r.Group("/api/v1", middleware.AuthorizenJWT(jwtService))
+	{
+		SubmissionRoutes.GET("/user/submit", sc.Submit)
+	}
+	rc := controller.NewResultController()
+	ResultRoutes := r.Group("/api/v1", middleware.AuthorizenJWT(jwtService))
+	{
+		ResultRoutes.GET("/user/result_list", rc.ResultList)
 	}
 	return r
 }
