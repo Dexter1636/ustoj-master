@@ -5,14 +5,14 @@ import (
 )
 
 type Submission struct {
-	SubmissionID   int       `gorm:"bigint"`
-	SubmissionTime time.Time `gorm:"timestamp"`
-	ProblemID      int       `gorm:"bigint"`
-	Username       string    `gorm:"varchar(20)"`
-	Language       string    `gorm:"varchar(20)"`
-	Code           string    `gorm:"mediumtext"`
-	Status         string    `gorm:"varchar(20)"`
-	RunTime        int       `gorm:"int"`
+	SubmissionID   int       `gorm:"bigint" json:"submission_id"`
+	SubmissionTime time.Time `gorm:"timestamp" json:"submission_time"`
+	ProblemID      int       `gorm:"bigint" json:"problem_id"`
+	Username       string    `gorm:"varchar(20)" json:"username"`
+	Language       string    `gorm:"varchar(20)" json:"language"`
+	Code           string    `gorm:"mediumtext" json:"code"`
+	Status         string    `gorm:"varchar(20)" json:"status"`
+	RunTime        int       `gorm:"int" json:"run_time"`
 }
 
 func (Submission) TableName() string {

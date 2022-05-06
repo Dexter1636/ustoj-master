@@ -20,7 +20,7 @@ type DBService interface {
 	ProblemDetail(problemID int) model.Problem
 	ProblemDescription(problemID int) model.Description
 	Submission(submission *model.Submission)
-	ResultList(submitted *model.Submission) model.Submission
+	ResultList(submitted *model.Submission) []model.Submission
 }
 type DBConnect struct {
 	DB  *gorm.DB
@@ -96,14 +96,15 @@ func (db *DBConnect) ProblemDescription(problemID int) model.Description {
 	var descriptionModel, d model.Description
 	if err := db.DB.Where("problem_id =?", problemID).Take(&d).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			db.DB.First(&descriptionModel)
-			log.Println("Successfully find the problem detail information" + string(descriptionModel.Description))
 
 			return descriptionModel
 		} else {
 
 			return descriptionModel
 		}
+	} else {
+		db.DB.First(&descriptionModel)
+		log.Println("Successfully find the problem detail information" + string(descriptionModel.Description))
 	}
 	return descriptionModel
 }
@@ -113,19 +114,16 @@ func (db *DBConnect) Submission(submission *model.Submission) {
 	}
 
 }
-func (db *DBConnect) ResultList(submitted *model.Submission) model.Submission {
-	var submission, s model.Submission
-	if err := db.DB.Where("problem_id =?", submitted.ProblemID).Where("username = ?", submitted.Username).Take(&s).Error; err != nil {
+func (db *DBConnect) ResultList(submitted *model.Submission) []model.Submission {
+	var submission, s []model.Submission
+	if err := db.DB.Where("problem_id =?", submitted.ProblemID).Where("username = ?", submitted.Username).Find(&s).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			db.DB.First(&submission)
-			log.Println("Successfully find the problem result" + strconv.Itoa(submission.ProblemID))
-
+			log.Println("result not found")
 			return submission
 		} else {
-
+			log.Println("ResultList: Unknown Error")
 			return submission
 		}
 	}
-	return submission
-
+	return s
 }

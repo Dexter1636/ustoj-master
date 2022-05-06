@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"log"
 	"net/http"
@@ -41,18 +42,24 @@ func (ctl SubmissionController) Submit(c *gin.Context) {
 		c.JSON(http.StatusOK, resp)
 	}()
 	if err := c.ShouldBind(&req); err != nil {
-		log.Println("ProblemList: BindQuery error")
+		log.Println("Submit: BindQuery error: " + err.Error())
+		code = vo.UnknownError
 		return
 	} else {
 		log.Printf("language: %v\n Code: %v\n", req.Language, req.Code)
 	}
 	authHeader := c.GetHeader("Authorization")
 	token, err := JWTService.ValidateToken(authHeader)
+	if err != nil {
+		code = vo.UnknownError
+		log.Println("Submit: ValidateToken Error:" + err.Error())
+		return
+	}
+	username := ""
 	if token.Valid {
 		claims := token.Claims.(jwt.MapClaims)
-		log.Println("Claim[issuer]:", claims["issuer"])
+		username = fmt.Sprintf("%v", claims["Username"])
 	} else {
-		log.Print(err)
 		code = vo.UnknownError
 		resp := vo.SubmissionResponse{
 			Code: code,
@@ -66,6 +73,8 @@ func (ctl SubmissionController) Submit(c *gin.Context) {
 		ProblemID:      req.ProblemID,
 		Code:           req.Code,
 		Language:       req.Language,
+		Username:       username,
+		Status:         "running",
 	}
 	DBService.Submission(&submission)
 	return

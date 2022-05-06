@@ -102,11 +102,15 @@ type ResultRequest struct {
 	ProblemID int    `form:"problem_id" json:"problem_id"`
 	Username  string `form:"username" json:"username"`
 }
-type ResultResponse struct {
+type ResultResponse2 struct {
 	Code      ErrNo  `json:"code"`
 	ProblemID int    `json:"problem_id"`
 	Username  string `json:"username"`
 	Status    string `json:"status"`
 	Language  string `json:"language"`
 	RunTime   int    `json:"run_time"`
+}
+type ResultResponse struct {
+	Code    ErrNo               `json:"code"`
+	Records []*model.Submission `json:"records"`
 }

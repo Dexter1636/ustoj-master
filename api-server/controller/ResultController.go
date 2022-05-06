@@ -2,6 +2,8 @@ package controller
 
 import (
 	"context"
+	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"log"
 	"net/http"
 	"ustoj-master/common"
@@ -29,23 +31,34 @@ func NewResultController() IResultController { // Similar to the interface of se
 
 func (ctl ResultController) ResultList(c *gin.Context) {
 	var req vo.ResultRequest //This varaible controls the request  json object
-	var submission, s model.Submission
-	var problemID = 0
-	var username = ""
-	var status = ""
-	var language = ""
-	var runtime = 0
+	var submission model.Submission
+	//var problemID = 0
+	//var username = ""
+	//var status = ""
+	//var language = ""
+	//var runtime = 0
+	records := make([]*model.Submission, 0)
 	code := vo.OK
 	DBService := service.NewDBConnect()
 	JWTService := service.NewJWTService()
+	authHeader := c.GetHeader("Authorization")
+	token, err := JWTService.ValidateToken(authHeader)
+	if token.Valid {
+		claims := token.Claims.(jwt.MapClaims)
+		req.Username = fmt.Sprintf("%v", claims["Username"])
+	} else {
+		log.Print(err)
+		code = vo.UnknownError
+		resp := vo.SubmissionResponse{
+			Code: code,
+		}
+		c.AbortWithStatusJSON(http.StatusUnauthorized, resp)
+		return
+	}
 	defer func() {
 		resp := vo.ResultResponse{
-			Code:      code,
-			ProblemID: problemID,
-			Username:  username,
-			Status:    status,
-			Language:  language,
-			RunTime:   runtime,
+			Code:    code,
+			Records: records,
 		}
 		c.JSON(http.StatusOK, resp)
 		utils.LogReqRespBody(req, resp, "ReturnProblemPage")
@@ -56,21 +69,17 @@ func (ctl ResultController) ResultList(c *gin.Context) {
 		return
 	}
 	submission = model.Submission{ProblemID: req.ProblemID, Username: req.Username}
-	s = DBService.ResultList(&submission)
-	problemID = s.ProblemID
-	username = s.Username
-	status = s.Status
-	language = s.Language
-	runtime = s.RunTime
+	s := DBService.ResultList(&submission)
+	for i, _ := range s {
+		s[i].Code = ""
+		records = append(records, &s[i])
+	}
+	//problemID = s[0].ProblemID
+	//username = s[0].Username
+	//status = s[0].Status
+	//language = s[0].Language
+	//runtime = s[0].RunTime
+	//log.Printf("problem_id:%v,language:%v", problemID, language)
 
-	if problemID == 0 {
-		code = vo.UnknownError
-	}
-	autoHeader := c.GetHeader("Authorization")
-	token, errToken := JWTService.ValidateToken(autoHeader)
-	if errToken != nil {
-		panic(errToken.Error())
-	}
-	print(token)
 	return
 }
