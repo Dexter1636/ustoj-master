@@ -63,8 +63,8 @@ type LogoutResponse struct {
 // ==================== PROBLEM LIST ====================
 
 type ProblemListRequest struct {
-	Page      int `json:"page"`
-	Page_Size int `json:"page_size"`
+	Page      int `form:"page" json:"page"`
+	Page_Size int `form:"page_size" json:"page_size"`
 }
 type ProblemListResponse struct {
 	Code        ErrNo           `json:"code"`
@@ -72,7 +72,7 @@ type ProblemListResponse struct {
 	Username    string          `json:"username"`
 }
 type ProblemDetailRequest struct {
-	ProblemID int `json:"problem_id"`
+	ProblemID int `form:"problem_id" json:"problem_id"`
 }
 type ProblemDetailResponse struct {
 	Code              ErrNo  `json:"code"`
@@ -87,9 +87,9 @@ type ProblemDetailResponse struct {
 
 // ==================== SUBMIT ====================
 type SubmissionRequest struct {
-	ProblemID int    `json:"problem_id"`
-	Language  string `json:"language"`
-	Code      string `json:"code"`
+	ProblemID int    `form:"problem_id" json:"problem_id"`
+	Language  string `form:"language" json:"language"`
+	Code      string `form:"code" json:"code"`
 }
 
 type SubmissionResponse struct {
@@ -99,8 +99,8 @@ type SubmissionResponse struct {
 // ==================== RESULT ====================
 
 type ResultRequest struct {
-	ProblemID int    `json:"problem_id"`
-	Username  string `json:"username"`
+	ProblemID int    `form:"problem_id" json:"problem_id"`
+	Username  string `form:"username" json:"username"`
 }
 type ResultResponse struct {
 	Code      ErrNo  `json:"code"`

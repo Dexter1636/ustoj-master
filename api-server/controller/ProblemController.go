@@ -31,7 +31,6 @@ func NewProblemController() IProblemController { // Similar to the interface of 
 }
 
 func (ctl ProblemController) ProblemList(c *gin.Context) {
-	var req vo.ProblemListRequest
 	code := vo.OK
 	var problemlist []model.Problem
 	DBService := service.NewDBConnect()
@@ -46,18 +45,15 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 		c.JSON(http.StatusOK, resp)
 		//utils.LogReqRespBody(req, resp, "ReturnProblemPage")
 	}()
-	if err := c.BindQuery(&req); err != nil {
+	var req vo.ProblemListRequest
+
+	if err := c.ShouldBindQuery(&req); err != nil {
 		code = vo.UnknownError
 		log.Println("ProblemList: BindQuery error")
 		return
 	}
 	log.Printf("ProblemList: page size: %+v\n", req.Page_Size)
 	problemlist = DBService.GetProblemList(problemlist)
-
-	//if len(problemlist) == 0 {
-	//	//code = vo.UserHasExisted
-	//	log.Println("No problem ")
-	//}
 	autoHeader := c.GetHeader("Authorization")
 	token, errToken := JWTService.ValidateToken(autoHeader)
 	if errToken != nil {

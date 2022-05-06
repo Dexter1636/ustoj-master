@@ -40,7 +40,7 @@ func (ctl SubmissionController) Submit(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, resp)
 	}()
-	if err := c.BindQuery(&req); err != nil {
+	if err := c.ShouldBind(&req); err != nil {
 		log.Println("ProblemList: BindQuery error")
 		return
 	} else {

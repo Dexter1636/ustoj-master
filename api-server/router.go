@@ -61,7 +61,7 @@ func RegisterRouter() *gin.Engine {
 	sc := controller.NewSubmissionController()
 	SubmissionRoutes := r.Group("/api/v1", middleware.AuthorizenJWT(jwtService))
 	{
-		SubmissionRoutes.GET("/user/submit", sc.Submit)
+		SubmissionRoutes.POST("/user/submit", sc.Submit)
 	}
 	rc := controller.NewResultController()
 	ResultRoutes := r.Group("/api/v1", middleware.AuthorizenJWT(jwtService))
