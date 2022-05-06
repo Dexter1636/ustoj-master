@@ -47,8 +47,9 @@ func (db *DBConnect) CreateUser(user *model.User) vo.ErrNo {
 			log.Println("CreateMember:Unknown-error while creating")
 			return vo.UnknownError
 		}
+	} else {
+		return vo.UnknownError
 	}
-	return vo.UnknownError
 }
 
 func (db *DBConnect) Login(user *model.User) string {
