@@ -26,11 +26,13 @@ func RunDispatch(done func()) {
 		// acquire related info and call k8s service to run the jobs
 		// _code, caseList, _lang
 		for _, sub := range submissionList {
+			subId := sub.SubmissionID
 			code := sub.Code
 			caseList := make([]string, 0, 8)
 			lang := sub.Language
 			fmt.Println(code, caseList, lang)
 			// TODO: call k8s service to run the jobs
+			service.CreateJob(subId, caseList, lang)
 		}
 		// update acquired submissions to status pending
 		service.UpdateSubmissionsToPending(&submissionList)
