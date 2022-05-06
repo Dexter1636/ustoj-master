@@ -34,7 +34,7 @@ type RegisterRequest struct {
 }
 
 type RegisterResponse struct {
-	Code ErrNo
+	Code ErrNo `json:"code"`
 }
 
 type LoginRequest struct {
@@ -45,11 +45,11 @@ type LoginRequest struct {
 // 登录成功后需要生成 JWT
 
 type LoginResponse struct {
-	Code ErrNo
+	Code ErrNo `json:"code"`
 	Data struct {
-		UserID string
+		UserID string `json:"user_id"`
 	}
-	Token string
+	Token string `json:"token"`
 }
 
 type LogoutRequest struct{}
@@ -57,52 +57,56 @@ type LogoutRequest struct{}
 // 登出成功需要删除 JWT
 
 type LogoutResponse struct {
-	Code ErrNo
+	Code ErrNo `json:"code"`
 }
 
 // ==================== PROBLEM LIST ====================
 
 type ProblemListRequest struct {
-	Page      int
-	Page_Size int
+	Page      int `json:"page"`
+	Page_Size int `json:"page_size"`
 }
 type ProblemListResponse struct {
-	Code        ErrNo
-	Problemlist []model.Problem
-	Username    string
+	Code        ErrNo           `json:"code"`
+	Problemlist []model.Problem `json:"problemlist"`
+	Username    string          `json:"username"`
 }
 type ProblemDetailRequest struct {
-	ProblemID int
+	ProblemID int `json:"problem_id"`
 }
 type ProblemDetailResponse struct {
-	Code              ErrNo
-	ProblemID         int
-	Description       string
-	Status            string
-	Difficulty        string
-	Acceptance        string
-	Global_Acceptance string
-	Username          string
+	Code              ErrNo  `json:"code"`
+	ProblemID         int    `json:"problem_id"`
+	Description       string `json:"description"`
+	Status            string `json:"status"`
+	Difficulty        string `json:"difficulty"`
+	Acceptance        string `json:"acceptance"`
+	Global_Acceptance string `json:"global_acceptance"`
+	Username          string `json:"username"`
 }
 
 // ==================== SUBMIT ====================
 type SubmissionRequest struct {
-	ProblemID int
-	Language  string
-	Code      string
+	ProblemID int    `json:"problem_id"`
+	Language  string `json:"language"`
+	Code      string `json:"code"`
+}
+
+type SubmissionResponse struct {
+	Code ErrNo `json:"code"`
 }
 
 // ==================== RESULT ====================
 
 type ResultRequest struct {
-	ProblemID int
-	Username  string
+	ProblemID int    `json:"problem_id"`
+	Username  string `json:"username"`
 }
 type ResultResponse struct {
-	Code      ErrNo
-	ProblemID int
-	Username  string
-	Status    string
-	Language  string
-	RunTime   int
+	Code      ErrNo  `json:"code"`
+	ProblemID int    `json:"problem_id"`
+	Username  string `json:"username"`
+	Status    string `json:"status"`
+	Language  string `json:"language"`
+	RunTime   int    `json:"run_time"`
 }

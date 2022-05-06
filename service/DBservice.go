@@ -55,13 +55,13 @@ func (db *DBConnect) Login(user *model.User) string {
 	var u model.User
 	if err := db.DB.Where("username = ?", user.Username).Where("password =?", user.Password).Take(&u).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return u.Username
-		} else {
 			log.Println("Not User record")
+			return "UnknownError"
+		} else {
 			return "UnknownError"
 		}
 	}
-	return "UnknownError"
+	return u.Username
 }
 func (db *DBConnect) GetProblemList(problem []model.Problem) []model.Problem {
 	var problemlist []model.Problem
@@ -109,8 +109,7 @@ func (db *DBConnect) ProblemDescription(problemID int) model.Description {
 }
 func (db *DBConnect) Submission(submission *model.Submission) {
 	if err := db.DB.Create(&submission).Error; err != nil {
-		log.Println("Submission Error")
-
+		log.Println("Submission Error:" + err.Error())
 	}
 
 }
