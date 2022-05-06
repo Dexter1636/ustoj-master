@@ -29,8 +29,8 @@ type ResponseMeta struct {
 // ==================== USER MANAGEMENT ====================
 
 type RegisterRequest struct {
-	Username string // required，只支持大小写，长度不小于 8 位 不超过 20 位
-	Password string // required，同时包括大小写、数字，长度不少于 8 位 不超过 20 位
+	Username string `json:"username"` // required，只支持大小写，长度不小于 8 位 不超过 20 位
+	Password string `json:"password"` // required，同时包括大小写、数字，长度不少于 8 位 不超过 20 位
 }
 
 type RegisterResponse struct {

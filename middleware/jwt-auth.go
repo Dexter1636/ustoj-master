@@ -22,13 +22,18 @@ func AuthorizenJWT(jwtService service.JWTService) gin.HandlerFunc {
 				Code: code,
 				Data: loginobject.Data,
 			}
-			c.JSON(http.StatusOK, resp)
+			//c.JSON(http.StatusOK, resp)
 			utils.LogReqRespBody(req, resp, "XXXXXXXXXXX")
 		}()
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
 			//response := vo.UnknownError
 			code = vo.UnknownError
+			resp := vo.LoginResponse{
+				Code: code,
+				Data: loginobject.Data,
+			}
+			c.AbortWithStatusJSON(http.StatusForbidden, resp)
 			return
 		}
 		token, err := jwtService.ValidateToken(authHeader)
@@ -39,9 +44,12 @@ func AuthorizenJWT(jwtService service.JWTService) gin.HandlerFunc {
 		} else {
 			log.Print(err)
 			code = vo.UnknownError
-			//c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			resp := vo.LoginResponse{
+				Code: code,
+				Data: loginobject.Data,
+			}
+			c.AbortWithStatusJSON(http.StatusUnauthorized, resp)
 			return
-
 		}
 	}
 }
