@@ -38,7 +38,7 @@ func NewDBConnect() DBService { // Similar to the interface of service
 
 func (db *DBConnect) CreateUser(user *model.User) vo.ErrNo {
 	var u model.User
-	if err := db.DB.Where("user_name = ?", user.Username).Take(&u).Error; err != nil {
+	if err := db.DB.Where("username = ?", user.Username).Take(&u).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			db.DB.Create(&user)
 			log.Println("CreateMember:Successfully create, username:" + user.Username)
@@ -53,7 +53,7 @@ func (db *DBConnect) CreateUser(user *model.User) vo.ErrNo {
 
 func (db *DBConnect) Login(user *model.User) string {
 	var u model.User
-	if err := db.DB.Where("user_name = ?", user.Username).Where("password =?", user.Password).Take(&u).Error; err != nil {
+	if err := db.DB.Where("username = ?", user.Username).Where("password =?", user.Password).Take(&u).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return u.Username
 		} else {

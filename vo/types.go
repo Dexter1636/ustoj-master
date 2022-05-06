@@ -29,8 +29,8 @@ type ResponseMeta struct {
 // ==================== USER MANAGEMENT ====================
 
 type RegisterRequest struct {
-	Username string `json:"username"` // required，只支持大小写，长度不小于 8 位 不超过 20 位
-	Password string `json:"password"` // required，同时包括大小写、数字，长度不少于 8 位 不超过 20 位
+	Username string `form:"username"` // required，只支持大小写，长度不小于 8 位 不超过 20 位
+	Password string `form:"password"` // required，同时包括大小写、数字，长度不少于 8 位 不超过 20 位
 }
 
 type RegisterResponse struct {
@@ -38,8 +38,8 @@ type RegisterResponse struct {
 }
 
 type LoginRequest struct {
-	Username string
-	Password string
+	Username string `form:"username"`
+	Password string `form:"password"`
 }
 
 // 登录成功后需要生成 JWT
