@@ -48,7 +48,6 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 		//utils.LogReqRespBody(req, resp, "ReturnProblemPage")
 	}()
 	var req vo.ProblemListRequest
-
 	if err := c.ShouldBindQuery(&req); err != nil {
 		code = vo.UnknownError
 		log.Print("ProblemList: BindQuery error")
@@ -68,7 +67,6 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 
 	Username = name
 	return
-
 }
 
 func (ctl ProblemController) ProblemDetail(c *gin.Context) {
@@ -116,10 +114,6 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 
 	d = DBService.ProblemDescription(req.ProblemID)
 	description = string(d.Description)
-
-	if problemID == 0 {
-		code = vo.UnknownError
-	}
 	autoHeader := c.GetHeader("Authorization")
 	token, errToken := JWTService.ValidateToken(autoHeader)
 	if errToken != nil {
