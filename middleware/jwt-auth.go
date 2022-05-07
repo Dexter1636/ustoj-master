@@ -1,14 +1,16 @@
 package middleware
 
 import (
-	"log"
 	"net/http"
+	"ustoj-master/common"
 	"ustoj-master/service"
 	"ustoj-master/vo"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
+
+var logger = common.LogInstance()
 
 //AuthorizeJWT valudates the token user given,return 401 if not valid
 func AuthorizenJWT(jwtService service.JWTService) gin.HandlerFunc {
@@ -38,10 +40,10 @@ func AuthorizenJWT(jwtService service.JWTService) gin.HandlerFunc {
 		token, err := jwtService.ValidateToken(authHeader)
 		if token.Valid {
 			claims := token.Claims.(jwt.MapClaims)
-			//log.Println("Claim[Username]:", claims["Username"])
-			log.Println("Claim[issuer]:", claims["issuer"])
+			//logger.Println("Claim[Username]:", claims["Username"])
+			logger.Println("Claim[issuer]:", claims["issuer"])
 		} else {
-			log.Print(err)
+			logger.Print(err)
 			code = vo.UnknownError
 			resp := vo.LoginResponse{
 				Code: code,

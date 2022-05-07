@@ -3,7 +3,6 @@ package controller
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"ustoj-master/common"
 	"ustoj-master/model"
@@ -48,10 +47,10 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 	var req vo.ProblemListRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
 		code = vo.UnknownError
-		log.Println("ProblemList: BindQuery error")
+		logger.Println("ProblemList: BindQuery error")
 		return
 	}
-	log.Printf("ProblemList: page size: %+v\n", req.Page_Size)
+	logger.Printf("ProblemList: page size: %+v\n", req.Page_Size)
 	problemlist = DBService.GetProblemList(problemlist)
 	autoHeader := c.GetHeader("Authorization")
 	token, errToken := JWTService.ValidateToken(autoHeader)
@@ -61,7 +60,7 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 	claims := token.Claims.(jwt.MapClaims)
 	//name, err := strconv.ParseUint(fmt.Sprintf("%v", claims["Username"]), 10, 64)
 	name := fmt.Sprintf("%v", claims["Username"])
-	log.Println(name)
+	logger.Println(name)
 	Username = name
 	return
 }
@@ -98,7 +97,7 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 	}()
 	if err := c.BindQuery(&req); err != nil {
 		code = vo.UnknownError
-		log.Println("ProblemList: BindQuery error")
+		logger.Println("ProblemList: BindQuery error")
 		return
 	}
 	problem.ProblemID = req.ProblemID

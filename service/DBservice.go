@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"log"
 	"strconv"
 	"ustoj-master/common"
 	"ustoj-master/model"
@@ -57,7 +56,7 @@ func (db *DBConnect) Login(user *model.User) string {
 	var u model.User
 	if err := db.DB.Where("username = ?", user.Username).Where("password =?", user.Password).Take(&u).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			log.Println("Not User record")
+			logger.Println("Not User record")
 			return "UnknownError"
 		} else {
 			return "UnknownError"
@@ -68,11 +67,11 @@ func (db *DBConnect) Login(user *model.User) string {
 func (db *DBConnect) GetProblemList(problem []model.Problem) []model.Problem {
 	var problemlist []model.Problem
 	if result := db.DB.Find(&problem); result.Error != nil {
-		log.Println("Error occured during get all problem information! ")
+		logger.Println("Error occured during get all problem information! ")
 		return problemlist
 	} else {
 
-		log.Println("The lenght of all problem :" + strconv.FormatInt(result.RowsAffected, 10))
+		logger.Println("The lenght of all problem :" + strconv.FormatInt(result.RowsAffected, 10))
 
 		problemlist = problem
 
@@ -84,7 +83,7 @@ func (db *DBConnect) ProblemDetail(problemID int) model.Problem {
 	if err := db.DB.Where("problem_id =?", problemID).Take(&p).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			db.DB.First(&problem, problemID)
-			log.Println("Successfully find the problem detail information" + strconv.Itoa(problem.ProblemID))
+			logger.Println("Successfully find the problem detail information" + strconv.Itoa(problem.ProblemID))
 
 			return problem
 		} else {
@@ -106,13 +105,13 @@ func (db *DBConnect) ProblemDescription(problemID int) model.Description {
 		}
 	} else {
 		db.DB.First(&descriptionModel)
-		log.Println("Successfully find the problem detail information" + string(descriptionModel.Description))
+		logger.Println("Successfully find the problem detail information" + string(descriptionModel.Description))
 	}
 	return descriptionModel
 }
 func (db *DBConnect) Submission(submission *model.Submission) {
 	if err := db.DB.Create(&submission).Error; err != nil {
-		log.Println("Submission Error:" + err.Error())
+		logger.Println("Submission Error:" + err.Error())
 	}
 
 }
@@ -120,10 +119,10 @@ func (db *DBConnect) ResultList(submitted *model.Submission) []model.Submission 
 	var submission, s []model.Submission
 	if err := db.DB.Where("problem_id =?", submitted.ProblemID).Where("username = ?", submitted.Username).Find(&s).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			log.Println("result not found")
+			logger.Println("result not found")
 			return submission
 		} else {
-			log.Println("ResultList: Unknown Error")
+			logger.Println("ResultList: Unknown Error")
 			return submission
 		}
 	}

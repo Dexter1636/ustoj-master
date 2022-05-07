@@ -3,7 +3,7 @@ package controller
 import (
 	"context"
 	//"fmt"
-	"log"
+
 	"net/http"
 
 	//	"strconv"
@@ -92,7 +92,7 @@ func (ctl UserController) Login(c *gin.Context) {
 	}()
 	if err := c.ShouldBind(&req); err != nil {
 		code = vo.UnknownError
-		log.Println("Login: ShouldBindJSON error")
+		logger.Println("Login: ShouldBindJSON error")
 		return
 	}
 	user = model.User{Username: req.Username, Password: req.Password, RoleId: 1}

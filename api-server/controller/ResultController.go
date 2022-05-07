@@ -3,14 +3,14 @@ package controller
 import (
 	"context"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	"log"
 	"net/http"
 	"ustoj-master/common"
 	"ustoj-master/model"
 	"ustoj-master/service"
 	"ustoj-master/utils"
 	"ustoj-master/vo"
+
+	"github.com/dgrijalva/jwt-go"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -47,7 +47,7 @@ func (ctl ResultController) ResultList(c *gin.Context) {
 		claims := token.Claims.(jwt.MapClaims)
 		req.Username = fmt.Sprintf("%v", claims["Username"])
 	} else {
-		log.Print(err)
+		logger.Print(err)
 		code = vo.UnknownError
 		resp := vo.SubmissionResponse{
 			Code: code,
@@ -65,7 +65,7 @@ func (ctl ResultController) ResultList(c *gin.Context) {
 	}()
 	if err := c.BindQuery(&req); err != nil {
 		code = vo.UnknownError
-		log.Println("ProblemList: BindQuery error")
+		logger.Println("ProblemList: BindQuery error")
 		return
 	}
 	submission = model.Submission{ProblemID: req.ProblemID, Username: req.Username}
@@ -79,7 +79,7 @@ func (ctl ResultController) ResultList(c *gin.Context) {
 	//status = s[0].Status
 	//language = s[0].Language
 	//runtime = s[0].RunTime
-	//log.Printf("problem_id:%v,language:%v", problemID, language)
+	//logger.Printf("problem_id:%v,language:%v", problemID, language)
 
 	return
 }

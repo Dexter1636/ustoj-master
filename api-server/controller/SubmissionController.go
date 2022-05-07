@@ -3,7 +3,6 @@ package controller
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 	"ustoj-master/common"
@@ -43,17 +42,17 @@ func (ctl SubmissionController) Submit(c *gin.Context) {
 		c.JSON(http.StatusOK, resp)
 	}()
 	if err := c.ShouldBind(&req); err != nil {
-		log.Println("Submit: BindQuery error: " + err.Error())
+		logger.Println("Submit: BindQuery error: " + err.Error())
 		code = vo.UnknownError
 		return
 	} else {
-		log.Printf("language: %v\n Code: %v\n", req.Language, req.Code)
+		logger.Printf("language: %v\n Code: %v\n", req.Language, req.Code)
 	}
 	authHeader := c.GetHeader("Authorization")
 	token, err := JWTService.ValidateToken(authHeader)
 	if err != nil {
 		code = vo.UnknownError
-		log.Println("Submit: ValidateToken Error:" + err.Error())
+		logger.Println("Submit: ValidateToken Error:" + err.Error())
 		return
 	}
 	username := ""
