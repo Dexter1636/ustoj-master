@@ -43,7 +43,7 @@ func AuthorizenJWT(jwtService service.JWTService) gin.HandlerFunc {
 			//logger.Println("Claim[Username]:", claims["Username"])
 			logger.Println("Claim[issuer]:", claims["issuer"])
 		} else {
-			logger.Print(err)
+			logger.Errorln(err)
 			code = vo.UnknownError
 			resp := vo.LoginResponse{
 				Code: code,

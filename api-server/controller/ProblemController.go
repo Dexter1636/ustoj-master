@@ -50,7 +50,7 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 		logger.Errorln("ProblemList: BindQuery error")
 		return
 	}
-	logger.Printf("ProblemList: page size: %+v\n", req.Page_Size)
+	logger.Infoln("ProblemList: page size: %+v\n", req.Page_Size)
 	problemlist = DBService.GetProblemList(problemlist)
 	autoHeader := c.GetHeader("Authorization")
 	token, errToken := JWTService.ValidateToken(autoHeader)
