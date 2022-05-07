@@ -41,7 +41,7 @@ func (db *DBConnect) CreateUser(user *model.User) (vo.ErrNo, error) {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			db.DB.Create(&user)
 			logger.Infoln("CreateMember:Successfully create, username:" + user.Username)
-			return vo.OK, err
+			return vo.OK, nil
 		} else {
 			logger.Errorln(err)
 			return vo.UnknownError, err
