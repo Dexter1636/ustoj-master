@@ -46,13 +46,12 @@ func GetResultListByProblemId(problemId int64, resultList *[]string) {
 }
 
 func WriteCodeToFile(code string, filePath string) error {
-	var f *os.File
-	var err error
 	if IsExists(filePath) {
-		f, err = os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC, 0600)
-	} else {
-		f, err = os.Create(filePath)
+		if err := os.Remove(filePath); err != nil {
+			logger.Errorln(err.Error())
+		}
 	}
+	f, err := os.Create(filePath)
 	defer f.Close()
 	if err != nil {
 		logger.Errorln(err.Error())
