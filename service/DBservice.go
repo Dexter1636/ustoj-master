@@ -13,7 +13,7 @@ import (
 )
 
 type DBService interface {
-	CreateUser(user *model.User) vo.ErrNo
+	CreateUser(user *model.User) (vo.ErrNo, error)
 	Login(user *model.User) string
 	//GetProblemList(map[string]interface{}) ([]*model.Problem, error)
 	GetProblemList(problem []model.Problem) []model.Problem
@@ -36,19 +36,20 @@ func NewDBConnect() DBService { // Similar to the interface of service
 	 retrun
 }*/
 
-func (db *DBConnect) CreateUser(user *model.User) vo.ErrNo {
+func (db *DBConnect) CreateUser(user *model.User) (vo.ErrNo, error) {
 	var u model.User
 	if err := db.DB.Where("username = ?", user.Username).Take(&u).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			db.DB.Create(&user)
-			log.Println("CreateMember:Successfully create, username:" + user.Username)
-			return vo.OK
+			logger.Infoln("CreateMember:Successfully create, username:" + user.Username)
+			return vo.OK, err
 		} else {
-			log.Println("CreateMember:Unknown-error while creating")
-			return vo.UnknownError
+			logger.Errorln(err)
+			return vo.UnknownError, err
 		}
 	} else {
-		return vo.UnknownError
+		logger.Errorln("user exists")
+		return vo.UnknownError, err
 	}
 }
 

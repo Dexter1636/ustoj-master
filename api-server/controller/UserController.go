@@ -5,6 +5,7 @@ import (
 	//"fmt"
 	"log"
 	"net/http"
+
 	//	"strconv"
 	"ustoj-master/common"
 	"ustoj-master/model"
@@ -15,6 +16,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
+
+var logger = common.LogInstance()
 
 type IUserController interface {
 	Register(c *gin.Context)
@@ -44,15 +47,29 @@ func (ctl UserController) Register(c *gin.Context) {
 		c.JSON(http.StatusOK, resp)
 		utils.LogReqRespBody(req, resp, "CreateMember")
 	}()
+
 	if err := c.ShouldBind(&req); err != nil {
 		code = vo.UnknownError
-		log.Println("CreateMember: ShouldBindJSON error")
+		resp := vo.SubmissionResponse{
+			Code: code,
+		}
+		logger.Errorln(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
 		return
 	}
 
 	user = model.User{Username: req.Username, Password: req.Password, RoleId: 1}
-	log.Println("username:" + user.Username + "password:" + user.Password)
-	code = DBService.CreateUser(&user)
+	logger.Infoln("username:" + user.Username + "password:" + user.Password)
+	code, err := DBService.CreateUser(&user)
+	if err != nil {
+		code = vo.UnknownError
+		resp := vo.SubmissionResponse{
+			Code: code,
+		}
+		logger.Errorln(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
+		return
+	}
 	return
 }
 
