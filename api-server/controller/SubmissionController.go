@@ -3,7 +3,6 @@ package controller
 import (
 	"context"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
 	"log"
 	"net/http"
 	"time"
@@ -11,6 +10,8 @@ import (
 	"ustoj-master/model"
 	"ustoj-master/service"
 	"ustoj-master/vo"
+
+	"github.com/dgrijalva/jwt-go"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -74,7 +75,7 @@ func (ctl SubmissionController) Submit(c *gin.Context) {
 		Code:           req.Code,
 		Language:       req.Language,
 		Username:       username,
-		Status:         "running",
+		Status:         "submitted",
 	}
 	DBService.Submission(&submission)
 	return
