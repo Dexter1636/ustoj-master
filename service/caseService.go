@@ -38,11 +38,11 @@ func UpdateSubmissionsToPending(submissionList *[]dto.SubmissionDto) {
 }
 
 func GetCaseListByProblemId(problemId int, caseList *[]string) {
-	common.DB.Table("case").Select("case").Where("problem_id = ?", problemId).Scan(&caseList)
+	common.DB.Table("test_case").Select("case").Where("problem_id = ?", problemId).Scan(&caseList)
 }
 
 func GetResultListByProblemId(problemId int64, resultList *[]string) {
-	common.DB.Table("case").Select("result").Where("problem_id = ?", problemId).Scan(&resultList)
+	common.DB.Table("test_case").Select("result").Where("problem_id = ?", problemId).Scan(&resultList)
 }
 
 func WriteCodeToFile(code string, filePath string) error {

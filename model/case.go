@@ -1,12 +1,12 @@
 package model
 
-type Case struct {
+type TestCase struct {
 	ProblemId int64  `gorm:"bigint"`
 	CaseId    int    `gorm:"int"`
 	Case      string `gorm:"mediumtext"`
 	Expected  string `gorm:"mediumtext"`
 }
 
-func (Case) TableName() string {
-	return "case"
+func (TestCase) TableName() string {
+	return "test_case"
 }

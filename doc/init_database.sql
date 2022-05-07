@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `case`(
+CREATE TABLE IF NOT EXISTS `test_case`(
    `problem_id` BIGINT,
    `case_id` INT,
    `case` MEDIUMTEXT,
