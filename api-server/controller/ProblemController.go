@@ -47,7 +47,7 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 	var req vo.ProblemListRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
 		code = vo.UnknownError
-		logger.Println("ProblemList: BindQuery error")
+		logger.Errorln("ProblemList: BindQuery error")
 		return
 	}
 	logger.Printf("ProblemList: page size: %+v\n", req.Page_Size)
@@ -55,7 +55,7 @@ func (ctl ProblemController) ProblemList(c *gin.Context) {
 	autoHeader := c.GetHeader("Authorization")
 	token, errToken := JWTService.ValidateToken(autoHeader)
 	if errToken != nil {
-		panic(errToken.Error())
+		logger.Errorln(errToken.Error())
 	}
 	claims := token.Claims.(jwt.MapClaims)
 	//name, err := strconv.ParseUint(fmt.Sprintf("%v", claims["Username"]), 10, 64)
@@ -113,7 +113,7 @@ func (ctl ProblemController) ProblemDetail(c *gin.Context) {
 	autoHeader := c.GetHeader("Authorization")
 	token, errToken := JWTService.ValidateToken(autoHeader)
 	if errToken != nil {
-		panic(errToken.Error())
+		logger.Errorln(errToken.Error())
 	}
 	claims := token.Claims.(jwt.MapClaims)
 
