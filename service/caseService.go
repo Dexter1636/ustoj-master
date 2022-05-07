@@ -15,8 +15,8 @@ func UpdateSubmissionToAccepted(submission dto.SubmissionDto) {
 	common.DB.Model(&model.Submission{}).Where("submission_id = ?", submission.SubmissionID).Update("status", "accepted")
 }
 
-func UpdateSubmissionToPending(submission dto.SubmissionDto) {
-	common.DB.Model(&model.Submission{}).Where("submission_id = ?", submission.SubmissionID).Update("status", "pending")
+func UpdateSubmissionToRunning(submission dto.SubmissionDto) {
+	common.DB.Model(&model.Submission{}).Where("submission_id = ?", submission.SubmissionID).Update("status", "running")
 }
 
 func UpdateSubmissionToRuntimeError(submission dto.SubmissionDto) {
@@ -33,7 +33,7 @@ func UpdateSubmissionToInternalError(submission dto.SubmissionDto) {
 
 func UpdateSubmissionsToPending(submissionList *[]dto.SubmissionDto) {
 	for _, sub := range *submissionList {
-		UpdateSubmissionToPending(sub)
+		UpdateSubmissionToRunning(sub)
 	}
 }
 

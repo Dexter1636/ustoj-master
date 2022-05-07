@@ -42,7 +42,7 @@ func RunDispatch(done func()) {
 				service.UpdateSubmissionToInternalError(subDto)
 			} else {
 				// update acquired submissions to status pending
-				service.UpdateSubmissionToPending(subDto)
+				service.UpdateSubmissionToRunning(subDto)
 			}
 		}
 	})
