@@ -22,13 +22,12 @@ func RunReadResult(done func()) {
 }
 
 func MainJob() {
-	list, err := service.ListJobById([]int{1})
+	subDtoList, err := service.ListJob()
 	if err != nil {
 		logger.Errorln("List Job error")
 		logger.Errorln(err)
 		return
 	}
-	logger.Infoln("=== job list:")
-	logger.Infoln(list)
-
+	logger.Infoln("=== job subDtoList:")
+	logger.Infoln(subDtoList)
 }

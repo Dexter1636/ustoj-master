@@ -25,7 +25,7 @@ func UpdateSubmissionsToPending(submissionList *[]dto.SubmissionDto) {
 	}
 }
 
-func GetCaseListByProblemId(problemId int64, caseList *[]string) {
+func GetCaseListByProblemId(problemId int, caseList *[]string) {
 	common.DB.Table("case").Select("case").Where("problem_id = ?", problemId).Scan(&caseList)
 }
 
@@ -43,11 +43,11 @@ func WriteCodeToFile(code string, filePath string) error {
 	}
 	defer f.Close()
 	if err != nil {
-		logger.Error(err.Error())
+		logger.Errorln(err.Error())
 		return err
 	} else {
 		_, err = f.Write([]byte(code))
-		logger.Error(err.Error())
+		logger.Errorln(err.Error())
 		return err
 	}
 }

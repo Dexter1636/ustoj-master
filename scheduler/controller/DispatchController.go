@@ -30,6 +30,7 @@ func RunDispatch(done func()) {
 			subId := subDto.SubmissionID
 			code := subDto.Code
 			caseList := make([]string, 0, 8)
+			service.GetCaseListByProblemId(subDto.ProblemID, &caseList)
 			lang := subDto.Language
 			fmt.Println(code, caseList, lang)
 			// write code snippet to file system
