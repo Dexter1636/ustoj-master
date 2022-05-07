@@ -11,8 +11,20 @@ func GetNWaitingSubmissions(n int, submissionDtoList *[]dto.SubmissionDto) {
 	common.DB.Model(model.Submission{}).Where("status = ?", "submitted").Order("submission_time").Limit(n).Find(&submissionDtoList)
 }
 
+func UpdateSubmissionToAccepted(submission dto.SubmissionDto) {
+	common.DB.Model(&model.Submission{}).Where("submission_id = ?", submission.SubmissionID).Update("status", "accepted")
+}
+
 func UpdateSubmissionToPending(submission dto.SubmissionDto) {
 	common.DB.Model(&model.Submission{}).Where("submission_id = ?", submission.SubmissionID).Update("status", "pending")
+}
+
+func UpdateSubmissionToRuntimeError(submission dto.SubmissionDto) {
+	common.DB.Model(&model.Submission{}).Where("submission_id = ?", submission.SubmissionID).Update("status", "runtimeError")
+}
+
+func UpdateSubmissionToWrongAnswer(submission dto.SubmissionDto) {
+	common.DB.Model(&model.Submission{}).Where("submission_id = ?", submission.SubmissionID).Update("status", "wrongAnswer")
 }
 
 func UpdateSubmissionToInternalError(submission dto.SubmissionDto) {
@@ -55,4 +67,9 @@ func WriteCodeToFile(code string, filePath string) error {
 func IsExists(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil || os.IsExist(err)
+}
+
+func CheckResult(submissionId int) (bool, error) {
+	// TODO
+	return true, nil
 }
