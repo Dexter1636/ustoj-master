@@ -34,7 +34,7 @@ func ReadResultJob() {
 	for _, subDto := range subDtoList {
 		switch subDto.Status {
 		case model.JobSuccess:
-			isRightAnswer, err := service.CheckResult(subDto.SubmissionID)
+			isRightAnswer, err := service.CheckResult(subDto.SubmissionID, subDto.ProblemID)
 			if err != nil {
 				service.UpdateSubmissionToInternalError(subDto)
 			} else if isRightAnswer {

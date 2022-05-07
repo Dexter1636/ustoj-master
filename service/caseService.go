@@ -2,9 +2,12 @@ package service
 
 import (
 	"os"
+	"strconv"
+	"strings"
 	"ustoj-master/common"
 	"ustoj-master/dto"
 	"ustoj-master/model"
+	config "ustoj-master/scheduler/model"
 )
 
 func GetNWaitingSubmissions(n int, submissionDtoList *[]dto.SubmissionDto) {
@@ -38,11 +41,11 @@ func UpdateSubmissionsToPending(submissionList *[]dto.SubmissionDto) {
 }
 
 func GetCaseListByProblemId(problemId int, caseList *[]string) {
-	common.DB.Table("test_case").Select("case").Where("problem_id = ?", problemId).Scan(&caseList)
+	common.DB.Table("test_case").Select("case").Where("problem_id = ?", problemId).Order("case_id").Scan(&caseList)
 }
 
-func GetResultListByProblemId(problemId int64, resultList *[]string) {
-	common.DB.Table("test_case").Select("result").Where("problem_id = ?", problemId).Scan(&resultList)
+func GetExpectedListByProblemId(problemId int, exceptedList *[]string) {
+	common.DB.Table("test_case").Select("expected").Where("problem_id = ?", problemId).Order("case_id").Scan(&exceptedList)
 }
 
 func WriteCodeToFile(code string, filePath string) error {
@@ -68,7 +71,26 @@ func IsExists(path string) bool {
 	return err == nil || os.IsExist(err)
 }
 
-func CheckResult(submissionId int) (bool, error) {
-	// TODO
+func CheckResult(submissionId int, problemId int) (bool, error) {
+	cfg := config.GetConfig()
+	// read output
+	buf, err := os.ReadFile(cfg.DataPath.SubmitPath + strconv.Itoa(submissionId) + "/output")
+	if err != nil {
+		return false, err
+	}
+	outputStr := string(buf)
+	outputList := strings.Split(outputStr, cfg.Const.Delimiter)
+	// read expected
+	exceptedList := make([]string, 0, 8)
+	GetExpectedListByProblemId(problemId, &exceptedList)
+	// compare
+	if len(outputList) != len(exceptedList) {
+		return false, nil
+	}
+	for i := 0; i < len(outputList); i++ {
+		if strings.TrimSpace(outputList[i]) != strings.TrimSpace(exceptedList[i]) {
+			return false, nil
+		}
+	}
 	return true, nil
 }
