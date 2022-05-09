@@ -10,6 +10,8 @@ require (
 	github.com/spf13/viper v1.10.1
 	gorm.io/driver/mysql v1.3.3
 	gorm.io/gorm v1.23.4
+	k8s.io/api v0.23.6
+	k8s.io/apimachinery v0.23.6
 	k8s.io/client-go v0.23.6
 )
 
@@ -26,6 +28,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
+	github.com/google/uuid v1.3.0
 	github.com/googleapis/gnostic v0.5.5 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
@@ -59,8 +62,6 @@ require (
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
-	k8s.io/api v0.23.6
-	k8s.io/apimachinery v0.23.6
 	k8s.io/klog/v2 v2.30.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20211115234752-e816edb12b65 // indirect
 	k8s.io/utils v0.0.0-20220210201930-3a6ce19ff2f9 // indirect

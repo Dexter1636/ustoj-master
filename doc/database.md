@@ -16,14 +16,25 @@
 
 **submission**
 
-| 字段名          | 数据类型    | 字段描述 | 备注                          |
-| --------------- | ----------- | -------- | ----------------------------- |
-| submission_id   | bigint      |          |                               |
-| submission_time | timestamp   |          |                               |
-| problem_id      | bigint      |          |                               |
-| username        | varchar(20) |          |                               |
-| language        | varchar(20) |          |                               |
-| code            | mediumtext  |          |                               |
-| status          | varchar(20) |          | "submitted", "pending" ...... |
-| run_time        | int         |          | timeunit: millisecond         |
+| 字段名          | 数据类型    | 字段描述 | 备注                                               |
+| --------------- | ----------- | -------- | -------------------------------------------------- |
+| submission_id   | bigint      |          |                                                    |
+| submission_time | timestamp   |          |                                                    |
+| problem_id      | bigint      |          |                                                    |
+| username        | varchar(20) |          |                                                    |
+| language        | varchar(20) |          |                                                    |
+| code            | mediumtext  |          |                                                    |
+| status          | varchar(20) |          | "submitted", "running", "wrong answer", "accepted" |
+| run_time        | int         |          | timeunit: millisecond                              |
+
+
+
+**test_case**
+
+|   字段名   |  数据类型  | 字段描述 |         备注          |
+| :--------: | :--------: | :------: | :-------------------: |
+| problem_id |   bigint   |          | composite primary key |
+|  case_id   |    int     |          | composite primary key |
+|    case    | mediumtext |          |                       |
+|  expected  | mediumtext |          |                       |
 

@@ -3,7 +3,7 @@ server:
 
 datasource:
   driverName: mysql
-  host: 192.168.31.152
+  host: 192.168.31.155
   port: 3306
   database: ustoj
   username: root
@@ -13,6 +13,9 @@ datasource:
 logger:
   writeFile: true
   level: info
+
+scheduler:
+  dispatchInterval: 1
 
 kubernetes:
   masterUrl: https://192.168.31.80:6443

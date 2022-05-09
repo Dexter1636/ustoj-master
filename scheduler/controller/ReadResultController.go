@@ -1,7 +1,9 @@
 package controller
 
 import (
-	"strconv"
+	"fmt"
+	"ustoj-master/model"
+	config "ustoj-master/scheduler/model"
 	"ustoj-master/service"
 
 	"github.com/robfig/cron/v3"
@@ -9,26 +11,41 @@ import (
 
 func RunReadResult(done func()) {
 	defer done()
+	cfg := config.GetConfig()
 
 	c := cron.New(cron.WithSeconds())
 
-	spec := "*/2 * * * * ?"
-	c.AddFunc(spec, MainJob)
+	spec := fmt.Sprintf("*/%d * * * * ?", cfg.Scheduler.ReadResultInterval)
+	c.AddFunc(spec, ReadResultJob)
 
 	c.Start()
 	select {} // block
 }
 
-func MainJob() {
-	list, err := service.ListRunningJob()
+func ReadResultJob() {
+	subDtoList, err := service.ListJob()
 	if err != nil {
 		logger.Errorln("List Job error")
 		logger.Errorln(err)
 		return
 	}
-	logger.Infoln(strconv.Itoa(len(list.Items)) + " jobs are running.")
-
-	for _, job := range list.Items {
-		logger.Infoln(job.Status.Phase)
+	logger.Infoln("=== job subDtoList:")
+	logger.Infoln(subDtoList)
+	for _, subDto := range subDtoList {
+		switch subDto.Status {
+		case model.JobSuccess:
+			isRightAnswer, err := service.CheckResult(subDto.SubmissionID, subDto.ProblemID)
+			if err != nil {
+				service.UpdateSubmissionToInternalError(subDto)
+			} else if isRightAnswer {
+				service.UpdateSubmissionToAccepted(subDto)
+			} else {
+				service.UpdateSubmissionToWrongAnswer(subDto)
+			}
+		case model.JobFailed:
+			service.UpdateSubmissionToRuntimeError(subDto)
+		case model.JobUnknown:
+			service.UpdateSubmissionToInternalError(subDto)
+		}
 	}
 }

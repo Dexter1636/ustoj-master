@@ -36,13 +36,9 @@ This is for the course project of CSIT6000O Advanced Cloud Computing, which incl
       username: <username>
       password: <password>
       charset: utf8
-   
-    redis:
-      host: <hostname>
-      port: <port>
-      db: <db>
-      user: <username>
-      password: <password>
+    
+    scheduler:
+      submissionNum: 16
     
     logger:
       level: info
