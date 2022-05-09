@@ -32,16 +32,19 @@ func RunDispatch(done func()) {
 			caseList := make([]string, 0, 8)
 			service.GetCaseListByProblemId(subDto.ProblemID, &caseList)
 			lang := subDto.Language
-			fmt.Println(code, caseList, lang)
+			logger.Infoln(code, caseList, lang)
 			// write code snippet to file system
 			if err := service.WriteCodeToFile(code, cfg.DataPath.SubmitPath+strconv.Itoa(subId)+"/code"); err != nil {
+				logger.Errorln(err)
 				service.UpdateSubmissionToInternalError(subDto)
 			}
 			// call k8s service to run the jobs
 			if err := service.CreateJob(subId, caseList, lang); err != nil {
+				logger.Errorln(err)
 				service.UpdateSubmissionToInternalError(subDto)
 			} else {
 				// update acquired submissions to status pending
+				logger.Infoln("run job:" + strconv.Itoa(subId))
 				service.UpdateSubmissionToRunning(subDto)
 			}
 		}

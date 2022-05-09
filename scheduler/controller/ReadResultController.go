@@ -36,6 +36,7 @@ func ReadResultJob() {
 		case model.JobSuccess:
 			isRightAnswer, err := service.CheckResult(subDto.SubmissionID, subDto.ProblemID)
 			if err != nil {
+				logger.Errorln(err)
 				service.UpdateSubmissionToInternalError(subDto)
 			} else if isRightAnswer {
 				service.UpdateSubmissionToAccepted(subDto)
