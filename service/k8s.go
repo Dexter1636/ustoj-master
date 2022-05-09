@@ -117,12 +117,18 @@ func ListJob() ([]dto.SubmissionDto, error) {
 	for _, pod := range list.Items {
 		sub_id, err := strconv.Atoi(pod.Labels["submit_id"])
 		if err != nil {
-			logger.Errorln(sub_id)
+			logger.Errorln(err)
+			return nil, err
+		}
+		problem_id, err := strconv.Atoi(pod.Labels["problem_id"])
+		if err != nil {
+			logger.Errorln(err)
 			return nil, err
 		}
 		dto := dto.SubmissionDto{
 			SubmissionID: sub_id,
 			Status:       PodJobConvMap[pod.Status.Phase],
+			ProblemID:    problem_id,
 		}
 		result = append(result, dto)
 	}
@@ -162,7 +168,7 @@ func ListRunningJob() ([]dto.SubmissionDto, error) {
 	return result, nil
 }
 
-func CreateJob(submitId int, caseList []string, language string) error {
+func CreateJob(submitId int, problemId int, caseList []string, language string) error {
 	var cfg = schedulerModel.GetConfig()
 	submitIdStr := strconv.Itoa(submitId)
 	podClient, err := c.GetPodClient("default")
@@ -234,8 +240,9 @@ func CreateJob(submitId int, caseList []string, language string) error {
 			// Namespace:                  new(string),
 			// ResourceVersion:            new(string),
 			Labels: map[string]string{
-				"ustoj":     "job",
-				"submit_id": submitIdStr,
+				"ustoj":      "job",
+				"submit_id":  submitIdStr,
+				"problem_id": strconv.Itoa(problemId),
 			},
 		},
 		Spec: &appcorev1.PodSpecApplyConfiguration{

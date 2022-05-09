@@ -93,6 +93,12 @@ func CheckResult(submissionId int, problemId int) (bool, error) {
 	// read expected
 	exceptedList := make([]string, 0, 8)
 	GetExpectedListByProblemId(problemId, &exceptedList)
+	logger.Infoln("=== output")
+	logger.Infoln(outputList)
+	logger.Infoln("length" + strconv.Itoa(len(outputList)))
+	logger.Infoln("=== excepted")
+	logger.Infoln(exceptedList)
+	logger.Infoln("length" + strconv.Itoa(len(exceptedList)))
 	// compare
 	if len(outputList) != len(exceptedList) {
 		return false, nil

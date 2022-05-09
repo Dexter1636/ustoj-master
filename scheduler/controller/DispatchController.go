@@ -41,7 +41,7 @@ func RunDispatch(done func()) {
 				service.UpdateSubmissionToInternalError(subDto)
 			}
 			// call k8s service to run the jobs
-			if err := service.CreateJob(subId, caseList, lang); err != nil {
+			if err := service.CreateJob(subId, subDto.ProblemID, caseList, lang); err != nil {
 				logger.Errorln(err)
 				service.UpdateSubmissionToInternalError(subDto)
 			} else {
