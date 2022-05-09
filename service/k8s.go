@@ -217,7 +217,12 @@ func CreateJob(submitId int, problemId int, caseList []string, language string) 
 			for case in ` + "`cat $VAR` \n" +
 				`do
 				bash -c "python ${DATA_PATH}/code/code $case >> ${DATA_PATH}/output/output.txt"
+				echo "` + cfg.Const.Delimiter + `" >> ${DATA_PATH}/output/output.txt
 			done
+			cp ${DATA_PATH}/output/output.txt ${DATA_PATH}/output/output_origin.txt
+			STR=` + "`cat ${DATA_PATH}/output/output.txt`\n" +
+				`FINAL=${STR%?}
+			echo $FINAL > ${DATA_PATH}/output/output.txt
 			`,
 		},
 		VolumeMounts: []appcorev1.VolumeMountApplyConfiguration{

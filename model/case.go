@@ -1,8 +1,8 @@
 package model
 
 type TestCase struct {
-	ProblemId int64  `gorm:"primary_key"`
-	CaseId    int    `gorm:"int"`
+	ProblemId int64  `gorm:"int"`
+	CaseId    int    `gorm:"primary_key"`
 	Case      string `gorm:"mediumtext"`
 	Expected  string `gorm:"mediumtext"`
 }
