@@ -210,7 +210,7 @@ func CreateJob(submitId int, caseList []string, language string) error {
 			IFS=$(echo -en "\n\b")
 			for case in ` + "`cat $VAR` \n" +
 				`do
-				python ${DATA_PATH}/code/code $case >> ${DATA_PATH}/output/output.txt
+				bash -c "python ${DATA_PATH}/code/code $case >> ${DATA_PATH}/output/output.txt"
 			done
 			`,
 		},
