@@ -23,15 +23,15 @@ func UpdateSubmissionToRunning(submission dto.SubmissionDto) {
 }
 
 func UpdateSubmissionToRuntimeError(submission dto.SubmissionDto) {
-	common.DB.Model(&model.Submission{}).Where("submission_id = ?", submission.SubmissionID).Update("status", "runtimeError")
+	common.DB.Model(&model.Submission{}).Where("submission_id = ?", submission.SubmissionID).Update("status", "runtime error")
 }
 
 func UpdateSubmissionToWrongAnswer(submission dto.SubmissionDto) {
-	common.DB.Model(&model.Submission{}).Where("submission_id = ?", submission.SubmissionID).Update("status", "wrongAnswer")
+	common.DB.Model(&model.Submission{}).Where("submission_id = ?", submission.SubmissionID).Update("status", "wrong answer")
 }
 
 func UpdateSubmissionToInternalError(submission dto.SubmissionDto) {
-	common.DB.Model(&model.Submission{}).Where("submission_id = ?", submission.SubmissionID).Update("status", "internalError")
+	common.DB.Model(&model.Submission{}).Where("submission_id = ?", submission.SubmissionID).Update("status", "internal error")
 }
 
 func UpdateSubmissionsToPending(submissionList *[]dto.SubmissionDto) {
@@ -48,20 +48,23 @@ func GetExpectedListByProblemId(problemId int, exceptedList *[]string) {
 	common.DB.Table("test_case").Select("expected").Where("problem_id = ?", problemId).Order("case_id").Scan(&exceptedList)
 }
 
-func WriteCodeToFile(code string, filePath string) error {
-	if IsExists(filePath) {
-		if err := os.Remove(filePath); err != nil {
-			logger.Errorln(err.Error())
+// WriteCodeToFile writes the code text to related file.
+// It checks whether the related file exists.
+// If yes, it will remove it and create a new one. If not, it will create the file directly.
+func WriteCodeToFile(code string, dirPath string) error {
+	if IsExists(dirPath) {
+		if err := os.RemoveAll(dirPath); err != nil {
+			logger.Errorln("error when remove file" + err.Error())
 		}
 	}
-	f, err := os.Create(filePath)
+	logger.Infoln("create file")
+	err := os.MkdirAll(dirPath, os.ModePerm)
+	f, err := os.Create(dirPath + "/code")
 	defer f.Close()
 	if err != nil {
-		logger.Errorln(err.Error())
 		return err
 	} else {
 		_, err = f.Write([]byte(code))
-		logger.Errorln(err.Error())
 		return err
 	}
 }
@@ -74,7 +77,7 @@ func IsExists(path string) bool {
 func CheckResult(submissionId int, problemId int) (bool, error) {
 	cfg := config.GetConfig()
 	// read output
-	buf, err := os.ReadFile(cfg.DataPath.SubmitPath + strconv.Itoa(submissionId) + "/output")
+	buf, err := os.ReadFile(cfg.DataPath.SubmitPath + strconv.Itoa(submissionId) + "/output/output.txt")
 	if err != nil {
 		return false, err
 	}
