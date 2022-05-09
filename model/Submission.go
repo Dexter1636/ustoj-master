@@ -15,7 +15,7 @@ const (
 )
 
 type Submission struct {
-	SubmissionID   int       `gorm:"bigint" json:"submission_id"`
+	SubmissionID   int       `gorm:"primary_key" json:"submission_id"`
 	SubmissionTime time.Time `gorm:"timestamp" json:"submission_time"`
 	ProblemID      int       `gorm:"bigint" json:"problem_id"`
 	Username       string    `gorm:"varchar(20)" json:"username"`

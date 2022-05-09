@@ -1,7 +1,7 @@
 package model
 
 type Description struct {
-	ProblemID   int    `gorm:"int"`
+	ProblemID   int    `gorm:"primary_key"`
 	Description []byte `gorm:"BLOB"`
 }
 

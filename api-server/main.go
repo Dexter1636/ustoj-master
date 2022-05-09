@@ -29,4 +29,5 @@ func InitTable() {
 	common.CreateTableIfNotExists(commonModel.Problem{})
 	common.CreateTableIfNotExists(commonModel.Description{})
 	common.CreateTableIfNotExists(commonModel.Submission{})
+	common.CreateTableIfNotExists(commonModel.TestCase{})
 }

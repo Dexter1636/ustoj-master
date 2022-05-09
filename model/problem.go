@@ -1,7 +1,7 @@
 package model
 
 type Problem struct {
-	ProblemID        int    `gorm:"int" json:"problem_id"`
+	ProblemID        int    `gorm:"primary_key" json:"problem_id"`
 	Status           string `gorm:"varchar(20)" json:"status"`
 	Difficulty       string `gorm:"varchar(20)" json:"difficulty"`
 	Acceptance       string `gorm:"varchar(20)" json:"acceptance"`
