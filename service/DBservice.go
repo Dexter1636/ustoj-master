@@ -71,7 +71,7 @@ func (db *DBConnect) GetProblemList(problem []model.Problem) []model.Problem {
 		return problemlist
 	} else {
 
-		logger.Println("The lenght of all problem :" + strconv.FormatInt(result.RowsAffected, 10))
+		logger.Infoln("The lenght of all problem :" + strconv.FormatInt(result.RowsAffected, 10))
 
 		problemlist = problem
 

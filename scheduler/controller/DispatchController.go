@@ -32,7 +32,9 @@ func RunDispatch(done func()) {
 			caseList := make([]string, 0, 8)
 			service.GetCaseListByProblemId(subDto.ProblemID, &caseList)
 			lang := subDto.Language
-			logger.Infoln(code, caseList, lang)
+			logger.Infoln(code)
+			logger.Infoln("case list:", caseList)
+			logger.Infoln("language: ", lang)
 			// write code snippet to file system
 			if err := service.WriteCodeToFile(code, cfg.DataPath.SubmitPath+strconv.Itoa(subId)+"/code"); err != nil {
 				logger.Errorln(err)

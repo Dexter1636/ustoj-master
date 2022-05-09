@@ -1,6 +1,7 @@
 package service
 
 import (
+	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -41,11 +42,11 @@ func UpdateSubmissionsToPending(submissionList *[]dto.SubmissionDto) {
 }
 
 func GetCaseListByProblemId(problemId int, caseList *[]string) {
-	common.DB.Table("test_case").Select("case").Where("problem_id = ?", problemId).Order("case_id").Scan(&caseList)
+	common.DB.Table("test_case").Select("`case`").Where("problem_id = ?", problemId).Order("case_id").Scan(&caseList)
 }
 
 func GetExpectedListByProblemId(problemId int, exceptedList *[]string) {
-	common.DB.Table("test_case").Select("expected").Where("problem_id = ?", problemId).Order("case_id").Scan(&exceptedList)
+	common.DB.Table("test_case").Select("`expected`").Where("problem_id = ?", problemId).Order("case_id").Scan(&exceptedList)
 }
 
 // WriteCodeToFile writes the code text to related file.
@@ -59,7 +60,13 @@ func WriteCodeToFile(code string, dirPath string) error {
 	}
 	logger.Infoln("create file")
 	err := os.MkdirAll(dirPath, os.ModePerm)
+	if err != nil {
+		return err
+	}
 	f, err := os.Create(dirPath + "/code")
+	if err != nil {
+		return err
+	}
 	defer f.Close()
 	if err != nil {
 		return err
@@ -77,7 +84,7 @@ func IsExists(path string) bool {
 func CheckResult(submissionId int, problemId int) (bool, error) {
 	cfg := config.GetConfig()
 	// read output
-	buf, err := os.ReadFile(cfg.DataPath.SubmitPath + strconv.Itoa(submissionId) + "/output/output.txt")
+	buf, err := ioutil.ReadFile(cfg.DataPath.SubmitPath + strconv.Itoa(submissionId) + "/output/output.txt")
 	if err != nil {
 		return false, err
 	}

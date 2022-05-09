@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 )
 
@@ -45,9 +46,10 @@ type Logger struct {
 }
 
 type Scheduler struct {
-	DispatchInterval   int `yaml:"dispatchInterval"`
-	DispatchNum        int `yaml:"dispatchNum"`
-	ReadResultInterval int `yaml:"readResultInterval"`
+	DispatchInterval   int    `yaml:"dispatchInterval"`
+	DispatchNum        int    `yaml:"dispatchNum"`
+	ReadResultInterval int    `yaml:"readResultInterval"`
+	JobPvcName         string `yaml:"jobPvcName"`
 }
 
 type Kubernetes struct {
@@ -61,6 +63,7 @@ func InitConfig() {
 	if err := viper.Unmarshal(&Cfg); err != nil {
 		panic(fmt.Errorf(err.Error()))
 	}
+	fmt.Println(Cfg)
 }
 
 func GetConfig() Config {

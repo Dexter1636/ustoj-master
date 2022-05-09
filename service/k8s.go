@@ -6,6 +6,7 @@ import (
 	"ustoj-master/common"
 	"ustoj-master/dto"
 	"ustoj-master/model"
+	schedulerModel "ustoj-master/scheduler/model"
 
 	"github.com/google/uuid"
 	corev1 "k8s.io/api/core/v1"
@@ -162,6 +163,7 @@ func ListRunningJob() ([]dto.SubmissionDto, error) {
 }
 
 func CreateJob(submitId int, caseList []string, language string) error {
+	var cfg = schedulerModel.GetConfig()
 	submitIdStr := strconv.Itoa(submitId)
 	podClient, err := c.GetPodClient("default")
 	if err != nil {
@@ -173,6 +175,11 @@ func CreateJob(submitId int, caseList []string, language string) error {
 	var imageName = new(string)
 	var pullPolicy = new(corev1.PullPolicy)
 	var restartPolicy = new(corev1.RestartPolicy)
+	var newFalse = false
+	var pvcName = cfg.Scheduler.JobPvcName
+	var jobMountPath = "/data"
+	var jobSubMountPath = "submit/" + submitIdStr
+	var volumeName = "job-data-volome"
 
 	*kind = "Pod"
 	*apiVer = "v1"
@@ -180,11 +187,10 @@ func CreateJob(submitId int, caseList []string, language string) error {
 	*imageName = "python"
 	*pullPolicy = corev1.PullIfNotPresent
 	*restartPolicy = corev1.RestartPolicyOnFailure
-	caseArrayStr := "("
+	caseArrayStr := ""
 	for _, _case := range caseList {
-		caseArrayStr += _case + " "
+		caseArrayStr += _case + "\n"
 	}
-	caseArrayStr += ")"
 
 	container := appcorev1.ContainerApplyConfiguration{
 		Name:    podName,
@@ -192,19 +198,30 @@ func CreateJob(submitId int, caseList []string, language string) error {
 		Command: []string{"/bin/bash", "-c", "--"},
 		Args: []string{
 			`
-			array=` + caseArrayStr + `
-			for element in ${array[@]}
-			do
-			python run.py $element
+			VAR='var.txt'
+			cat > ${VAR} <<- EOF
+			` + caseArrayStr + `
+			EOF
+			echo "the running case are: "
+			cat $VAR
+			DATA_PATH="/data/"
+			mkdir -p ${DATA_PATH}/output
+			touch ${DATA_PATH}/output/output.txt
+			IFS=$(echo -en "\n\b")
+			for case in ` + "`cat $VAR` \n" +
+				`do
+				python ${DATA_PATH}/code/code $case >> ${DATA_PATH}/output/output.txt
 			done
 			`,
-			"echo 1",
 		},
-		// WorkingDir:             new(string),
-		Env:          []appcorev1.EnvVarApplyConfiguration{},
-		VolumeMounts: []appcorev1.VolumeMountApplyConfiguration{},
-		// LivenessProbe:          &corev1.ProbeApplyConfiguration{},
-		// StartupProbe:           &corev1.ProbeApplyConfiguration{},
+		VolumeMounts: []appcorev1.VolumeMountApplyConfiguration{
+			{
+				Name:      &volumeName,
+				ReadOnly:  &newFalse,
+				MountPath: &jobMountPath,
+				SubPath:   &jobSubMountPath,
+			},
+		},
 		ImagePullPolicy: pullPolicy,
 	}
 	_, err = podClient.Apply(context.Background(), &appcorev1.PodApplyConfiguration{
@@ -222,41 +239,15 @@ func CreateJob(submitId int, caseList []string, language string) error {
 			},
 		},
 		Spec: &appcorev1.PodSpecApplyConfiguration{
-			// Volumes:                       []corev1.VolumeApplyConfiguration{},
 			Containers: []appcorev1.ContainerApplyConfiguration{container},
 			Volumes: []appcorev1.VolumeApplyConfiguration{
 				{
-					Name: podName,
+					Name: &volumeName,
 					VolumeSourceApplyConfiguration: appcorev1.VolumeSourceApplyConfiguration{
-						HostPath:              &appcorev1.HostPathVolumeSourceApplyConfiguration{},
-						EmptyDir:              &appcorev1.EmptyDirVolumeSourceApplyConfiguration{},
-						GCEPersistentDisk:     &appcorev1.GCEPersistentDiskVolumeSourceApplyConfiguration{},
-						AWSElasticBlockStore:  &appcorev1.AWSElasticBlockStoreVolumeSourceApplyConfiguration{},
-						GitRepo:               &appcorev1.GitRepoVolumeSourceApplyConfiguration{},
-						Secret:                &appcorev1.SecretVolumeSourceApplyConfiguration{},
-						NFS:                   &appcorev1.NFSVolumeSourceApplyConfiguration{},
-						ISCSI:                 &appcorev1.ISCSIVolumeSourceApplyConfiguration{},
-						Glusterfs:             &appcorev1.GlusterfsVolumeSourceApplyConfiguration{},
-						PersistentVolumeClaim: &appcorev1.PersistentVolumeClaimVolumeSourceApplyConfiguration{},
-						RBD:                   &appcorev1.RBDVolumeSourceApplyConfiguration{},
-						FlexVolume:            &appcorev1.FlexVolumeSourceApplyConfiguration{},
-						Cinder:                &appcorev1.CinderVolumeSourceApplyConfiguration{},
-						CephFS:                &appcorev1.CephFSVolumeSourceApplyConfiguration{},
-						Flocker:               &appcorev1.FlockerVolumeSourceApplyConfiguration{},
-						DownwardAPI:           &appcorev1.DownwardAPIVolumeSourceApplyConfiguration{},
-						FC:                    &appcorev1.FCVolumeSourceApplyConfiguration{},
-						AzureFile:             &appcorev1.AzureFileVolumeSourceApplyConfiguration{},
-						ConfigMap:             &appcorev1.ConfigMapVolumeSourceApplyConfiguration{},
-						VsphereVolume:         &appcorev1.VsphereVirtualDiskVolumeSourceApplyConfiguration{},
-						Quobyte:               &appcorev1.QuobyteVolumeSourceApplyConfiguration{},
-						AzureDisk:             &appcorev1.AzureDiskVolumeSourceApplyConfiguration{},
-						PhotonPersistentDisk:  &appcorev1.PhotonPersistentDiskVolumeSourceApplyConfiguration{},
-						Projected:             &appcorev1.ProjectedVolumeSourceApplyConfiguration{},
-						PortworxVolume:        &appcorev1.PortworxVolumeSourceApplyConfiguration{},
-						ScaleIO:               &appcorev1.ScaleIOVolumeSourceApplyConfiguration{},
-						StorageOS:             &appcorev1.StorageOSVolumeSourceApplyConfiguration{},
-						CSI:                   &appcorev1.CSIVolumeSourceApplyConfiguration{},
-						Ephemeral:             &appcorev1.EphemeralVolumeSourceApplyConfiguration{},
+						PersistentVolumeClaim: &appcorev1.PersistentVolumeClaimVolumeSourceApplyConfiguration{
+							ClaimName: &pvcName,
+							ReadOnly:  &newFalse,
+						},
 					},
 				},
 			},
