@@ -192,7 +192,7 @@ func CreateJob(submitId int, problemId int, caseList []string, language string) 
 	*podName = "job-sumbission-" + submitIdStr
 	*imageName = "python"
 	*pullPolicy = corev1.PullIfNotPresent
-	*restartPolicy = corev1.RestartPolicyOnFailure
+	*restartPolicy = corev1.RestartPolicyNever
 	caseArrayStr := ""
 	for _, _case := range caseList {
 		caseArrayStr += _case + "\n"
