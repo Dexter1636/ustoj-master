@@ -2,11 +2,12 @@ package common
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
 	"log"
+
+	"github.com/spf13/viper"
 )
 
-func InitConfig(configFile string) {
+func ReadConfig(configFile string) {
 	viper.SetConfigFile(configFile)
 	if err := viper.ReadInConfig(); err != nil {
 		panic(fmt.Errorf(err.Error()))

@@ -1,0 +1,28 @@
+server:
+  port: 8080
+
+datasource:
+  driverName: mysql
+  host: 192.168.31.80
+  port: 31702
+  database: ustoj_dev
+  username: root
+  password: 123456
+  charset: utf8
+
+logger:
+  writeFile: true
+  level: info
+
+scheduler:
+  dispatchInterval: 2
+  dispatchNum: 8
+  readResultInterval: 4
+  jobPvcName: ustoj-master-data-pvc
+
+dataPath:
+  submitPath: /data/ustoj//submit/
+
+kubernetes:
+  masterUrl: https://192.168.31.80:6443
+  masterConfig: /tmp/kubernetes_admin_config/admin.conf

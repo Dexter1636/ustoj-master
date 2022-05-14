@@ -1,0 +1,28 @@
+ARG BUILD_FROM=golang:1.18
+ARG RUN_FROM=debian
+
+FROM ${BUILD_FROM} as builder
+
+ENV GOPROXY https://goproxy.cn,direct
+RUN umask 022
+
+RUN apt update -y
+RUN apt install -y curl git build-essential
+
+RUN mkdir -p /etc/ustoj-scheduler
+RUN mkdir -p /go/src/ustoj-scheduler
+RUN mkdir -p /go/bin
+COPY . /go/src/ustoj-scheduler
+RUN cd /go/src/ustoj-scheduler/scheduler; go build -v -o /go/bin/ustoj-scheduler
+
+FROM ${RUN_FROM}
+
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+# RUN apk --no-cache add ca-certificates libdrm curl
+RUN apt update -y
+RUN apt install -y ca-certificates curl
+RUN mkdir -p /var/log/ustoj-scheduler
+WORKDIR /root/
+COPY --from=0 /go/bin/ustoj-scheduler .
+
+CMD ["./ustoj-scheduler"]

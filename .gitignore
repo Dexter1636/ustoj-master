@@ -11,3 +11,5 @@ scheduler/build/*
 
 config/*
 logs
+data
+data/*
